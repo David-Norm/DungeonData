@@ -1,7 +1,9 @@
 public class Character {
     private String charId;
     private int level;
+    private String classId;        // Added: main class
     private String subclassId;
+    private String speciesId;      // Added: main species
     private String subspeciesId;
     private String backgroundId;
     private int playerId;
@@ -16,12 +18,15 @@ public class Character {
     // Constructors
     public Character() {}
 
-    public Character(String charId, int level, String subclassId, String subspeciesId,
-                     String backgroundId, int playerId, String gameId,
-                     int str, int dex, int con, int intel, int wis, int cha) {
+    public Character(String charId, int level, String classId, String subclassId,
+                     String speciesId, String subspeciesId, String backgroundId,
+                     int playerId, String gameId, int str, int dex, int con,
+                     int intel, int wis, int cha) {
         this.charId = charId;
         this.level = level;
+        this.classId = classId;
         this.subclassId = subclassId;
+        this.speciesId = speciesId;
         this.subspeciesId = subspeciesId;
         this.backgroundId = backgroundId;
         this.playerId = playerId;
@@ -41,8 +46,14 @@ public class Character {
     public int getLevel() { return level; }
     public void setLevel(int level) { this.level = level; }
 
+    public String getClassId() { return classId; }
+    public void setClassId(String classId) { this.classId = classId; }
+
     public String getSubclassId() { return subclassId; }
     public void setSubclassId(String subclassId) { this.subclassId = subclassId; }
+
+    public String getSpeciesId() { return speciesId; }
+    public void setSpeciesId(String speciesId) { this.speciesId = speciesId; }
 
     public String getSubspeciesId() { return subspeciesId; }
     public void setSubspeciesId(String subspeciesId) { this.subspeciesId = subspeciesId; }
@@ -103,8 +114,23 @@ public class Character {
         return score + " (" + modStr + ")";
     }
 
+    // Helper methods for displaying character info
+    public String getFullClass() {
+        if (subclassId != null && !subclassId.isEmpty()) {
+            return classId + " (" + subclassId + ")";
+        }
+        return classId;
+    }
+
+    public String getFullSpecies() {
+        if (subspeciesId != null && !subspeciesId.isEmpty()) {
+            return speciesId + " (" + subspeciesId + ")";
+        }
+        return speciesId;
+    }
+
     @Override
     public String toString() {
-        return charId + " (Level " + level + ")";
+        return charId + " (Level " + level + " " + getFullClass() + ")";
     }
 }

@@ -12,6 +12,20 @@ public class LookupDAO {
         this.connection = DatabaseConnection.getInstance().getConnection();
     }
 
+    public List<String> getClasses() throws SQLException {
+        List<String> classes = new ArrayList<>();
+        String query = "SELECT class_id FROM class ORDER BY class_id";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                classes.add(rs.getString("class_id"));
+            }
+        }
+        return classes;
+    }
+
     public List<String> getSubclasses() throws SQLException {
         List<String> subclasses = new ArrayList<>();
         String query = "SELECT subclass_id FROM subclass ORDER BY subclass_id";
@@ -26,6 +40,35 @@ public class LookupDAO {
         return subclasses;
     }
 
+    public List<String> getSubclassesByClass(String classId) throws SQLException {
+        List<String> subclasses = new ArrayList<>();
+        String query = "SELECT subclass_id FROM subclass WHERE class_id = ? ORDER BY subclass_id";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, classId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    subclasses.add(rs.getString("subclass_id"));
+                }
+            }
+        }
+        return subclasses;
+    }
+
+    public List<String> getSpecies() throws SQLException {
+        List<String> species = new ArrayList<>();
+        String query = "SELECT species_id FROM species ORDER BY species_id";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                species.add(rs.getString("species_id"));
+            }
+        }
+        return species;
+    }
+
     public List<String> getSubspecies() throws SQLException {
         List<String> subspecies = new ArrayList<>();
         String query = "SELECT subspecies_id FROM subspecies ORDER BY subspecies_id";
@@ -35,6 +78,21 @@ public class LookupDAO {
 
             while (rs.next()) {
                 subspecies.add(rs.getString("subspecies_id"));
+            }
+        }
+        return subspecies;
+    }
+
+    public List<String> getSubspeciesBySpecies(String speciesId) throws SQLException {
+        List<String> subspecies = new ArrayList<>();
+        String query = "SELECT subspecies_id FROM subspecies WHERE species_id = ? ORDER BY subspecies_id";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, speciesId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    subspecies.add(rs.getString("subspecies_id"));
+                }
             }
         }
         return subspecies;

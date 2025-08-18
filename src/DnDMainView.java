@@ -1,10 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 // DnDMainView.java - Main window coordinating all view panels
 public class DnDMainView extends JFrame {
     private DnDController controller;
     private JTabbedPane tabbedPane;
+    private JLabel statusBar;
+    private Timer statusTimer;
 
     // View panels
     private CharacterView characterView;
@@ -19,6 +23,7 @@ public class DnDMainView extends JFrame {
         initializeComponents();
         setupLayout();
         setupMenuBar();
+        setupStatusTimer();
     }
 
     private void initializeComponents() {
@@ -31,12 +36,12 @@ public class DnDMainView extends JFrame {
         tabbedPane = new JTabbedPane();
 
         // Initialize view panels
-        characterView = new CharacterView(controller);
-        playerView = new PlayerView(controller);
-        campaignView = new CampaignView(controller);
+        characterView = new CharacterView(controller, this);
+        playerView = new PlayerView(controller, this);
+        campaignView = new CampaignView(controller, this);
         classSpeciesView = new ClassSpeciesView(controller);
-        characterCreatorView = new CharacterCreatorView(controller);
-        reportView = new ReportView(controller);
+        characterCreatorView = new CharacterCreatorView(controller, this);
+        reportView = new ReportView(controller, this);
     }
 
     private void setupLayout() {
@@ -52,9 +57,15 @@ public class DnDMainView extends JFrame {
 
         add(tabbedPane, BorderLayout.CENTER);
 
-        // Add status bar
-        JLabel statusBar = new JLabel("Ready");
-        statusBar.setBorder(BorderFactory.createLoweredBevelBorder());
+        // Add status bar with enhanced styling
+        statusBar = new JLabel("Ready - Welcome to D&D Character Database Manager");
+        statusBar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLoweredBevelBorder(),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        statusBar.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+        statusBar.setOpaque(true);
+        statusBar.setBackground(new Color(240, 240, 240));
         add(statusBar, BorderLayout.SOUTH);
     }
 
@@ -90,16 +101,46 @@ public class DnDMainView extends JFrame {
         setJMenuBar(menuBar);
     }
 
+    private void setupStatusTimer() {
+        // Timer to clear status messages after 5 seconds
+        statusTimer = new Timer(5000, e -> {
+            if (!statusBar.getText().equals("Ready")) {
+                setStatusMessage("Ready", MessageType.INFO);
+            }
+        });
+        statusTimer.setRepeats(false);
+    }
+
     private void refreshCurrentTab() {
         int selectedIndex = tabbedPane.getSelectedIndex();
+        String tabName = tabbedPane.getTitleAt(selectedIndex);
+
         switch (selectedIndex) {
-            case 0 -> characterView.refreshData();
-            case 1 -> playerView.refreshData();
-            case 2 -> campaignView.refreshData();
-            case 3 -> classSpeciesView.refreshData();
-            case 4 -> characterCreatorView.refreshData();
-            case 5 -> reportView.refreshData();
-            default -> JOptionPane.showMessageDialog(this, "Current tab refreshed!");
+            case 0 -> {
+                characterView.refreshData();
+                setStatusMessage("Characters data refreshed", MessageType.SUCCESS);
+            }
+            case 1 -> {
+                playerView.refreshData();
+                setStatusMessage("Players data refreshed", MessageType.SUCCESS);
+            }
+            case 2 -> {
+                campaignView.refreshData();
+                setStatusMessage("Campaigns data refreshed", MessageType.SUCCESS);
+            }
+            case 3 -> {
+                classSpeciesView.refreshData();
+                setStatusMessage("Classes & Species data refreshed", MessageType.SUCCESS);
+            }
+            case 4 -> {
+                characterCreatorView.refreshData();
+                setStatusMessage("Character Creator data refreshed", MessageType.SUCCESS);
+            }
+            case 5 -> {
+                reportView.refreshData();
+                setStatusMessage("Reports cleared", MessageType.SUCCESS);
+            }
+            default -> setStatusMessage("Tab refreshed", MessageType.SUCCESS);
         }
     }
 
@@ -110,7 +151,7 @@ public class DnDMainView extends JFrame {
         classSpeciesView.refreshData();
         characterCreatorView.refreshData();
         reportView.refreshData();
-        JOptionPane.showMessageDialog(this, "All data refreshed!");
+        setStatusMessage("All data refreshed successfully", MessageType.SUCCESS);
     }
 
     private void showAboutDialog() {
@@ -138,14 +179,63 @@ public class DnDMainView extends JFrame {
     public void switchToCharactersTab() {
         tabbedPane.setSelectedIndex(0);
         characterView.refreshData();
+        setStatusMessage("Switched to Characters tab", MessageType.INFO);
     }
 
     public void switchToPlayersTab() {
         tabbedPane.setSelectedIndex(1);
         playerView.refreshData();
+        setStatusMessage("Switched to Players tab", MessageType.INFO);
     }
 
     public DnDController getController() {
         return controller;
+    }
+
+    // Enhanced status bar messaging system
+    public enum MessageType {
+        INFO(new Color(240, 240, 240), Color.BLACK),
+        SUCCESS(new Color(220, 255, 220), new Color(0, 120, 0)),
+        WARNING(new Color(255, 248, 220), new Color(180, 120, 0)),
+        ERROR(new Color(255, 220, 220), new Color(180, 0, 0));
+
+        private final Color backgroundColor;
+        private final Color textColor;
+
+        MessageType(Color backgroundColor, Color textColor) {
+            this.backgroundColor = backgroundColor;
+            this.textColor = textColor;
+        }
+
+        public Color getBackgroundColor() { return backgroundColor; }
+        public Color getTextColor() { return textColor; }
+    }
+
+    public void setStatusMessage(String message, MessageType type) {
+        SwingUtilities.invokeLater(() -> {
+            statusBar.setText(message);
+            statusBar.setBackground(type.getBackgroundColor());
+            statusBar.setForeground(type.getTextColor());
+
+            // Restart the timer to clear the message after 5 seconds
+            statusTimer.restart();
+        });
+    }
+
+    // Convenience methods for different message types
+    public void showInfoMessage(String message) {
+        setStatusMessage(message, MessageType.INFO);
+    }
+
+    public void showSuccessMessage(String message) {
+        setStatusMessage(message, MessageType.SUCCESS);
+    }
+
+    public void showWarningMessage(String message) {
+        setStatusMessage(message, MessageType.WARNING);
+    }
+
+    public void showErrorMessage(String message) {
+        setStatusMessage(message, MessageType.ERROR);
     }
 }

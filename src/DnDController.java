@@ -79,6 +79,15 @@ public class DnDController {
         }
     }
 
+    public List<Character> getCharactersByPlayer(int playerId) {
+        try {
+            return characterDAO.getCharactersByPlayer(playerId);
+        } catch (SQLException e) {
+            handleError("Error loading characters for player", e);
+            return List.of();
+        }
+    }
+
     // Player operations
     public List<Player> getAllPlayers() {
         try {
@@ -112,6 +121,15 @@ public class DnDController {
     }
 
     // Lookup data operations
+    public List<String> getClasses() {
+        try {
+            return lookupDAO.getClasses();
+        } catch (SQLException e) {
+            handleError("Error loading classes", e);
+            return List.of();
+        }
+    }
+
     public List<String> getSubclasses() {
         try {
             return lookupDAO.getSubclasses();
@@ -121,11 +139,38 @@ public class DnDController {
         }
     }
 
+    public List<String> getSubclassesByClass(String classId) {
+        try {
+            return lookupDAO.getSubclassesByClass(classId);
+        } catch (SQLException e) {
+            handleError("Error loading subclasses for class: " + classId, e);
+            return List.of();
+        }
+    }
+
+    public List<String> getSpecies() {
+        try {
+            return lookupDAO.getSpecies();
+        } catch (SQLException e) {
+            handleError("Error loading species", e);
+            return List.of();
+        }
+    }
+
     public List<String> getSubspecies() {
         try {
             return lookupDAO.getSubspecies();
         } catch (SQLException e) {
             handleError("Error loading subspecies", e);
+            return List.of();
+        }
+    }
+
+    public List<String> getSubspeciesBySpecies(String speciesId) {
+        try {
+            return lookupDAO.getSubspeciesBySpecies(speciesId);
+        } catch (SQLException e) {
+            handleError("Error loading subspecies for species: " + speciesId, e);
             return List.of();
         }
     }
@@ -157,7 +202,7 @@ public class DnDController {
         }
     }
 
-    // Report operations
+    // Report operations - only the 10 from provided SQL queries
     public List<Map<String, Object>> getCharactersByClassAndCampaign() {
         try {
             return reportDAO.getCharactersByClassAndCampaign();
@@ -167,11 +212,47 @@ public class DnDController {
         }
     }
 
+    public List<Map<String, Object>> getClassesWithMostSubclasses() {
+        try {
+            return reportDAO.getClassesWithMostSubclasses();
+        } catch (SQLException e) {
+            handleError("Error generating classes with most subclasses report", e);
+            return List.of();
+        }
+    }
+
     public List<Map<String, Object>> getAboveAverageLevelBySpecies() {
         try {
             return reportDAO.getAboveAverageLevelBySpecies();
         } catch (SQLException e) {
             handleError("Error generating report", e);
+            return List.of();
+        }
+    }
+
+    public List<Map<String, Object>> getAllPlayersAndCharacters() {
+        try {
+            return reportDAO.getAllPlayersAndCharacters();
+        } catch (SQLException e) {
+            handleError("Error generating all players and characters report", e);
+            return List.of();
+        }
+    }
+
+    public List<Map<String, Object>> getPopularSettingsAndMilitary() {
+        try {
+            return reportDAO.getPopularSettingsAndMilitary();
+        } catch (SQLException e) {
+            handleError("Error generating popular settings and military report", e);
+            return List.of();
+        }
+    }
+
+    public List<Map<String, Object>> getCharacterSpeciesAndSize() {
+        try {
+            return reportDAO.getCharacterSpeciesAndSize();
+        } catch (SQLException e) {
+            handleError("Error generating character species and size report", e);
             return List.of();
         }
     }
@@ -190,6 +271,15 @@ public class DnDController {
             return reportDAO.getCampaignParticipation();
         } catch (SQLException e) {
             handleError("Error generating report", e);
+            return List.of();
+        }
+    }
+
+    public List<Map<String, Object>> getClassDistribution() {
+        try {
+            return reportDAO.getClassDistribution();
+        } catch (SQLException e) {
+            handleError("Error generating class distribution report", e);
             return List.of();
         }
     }

@@ -16,8 +16,11 @@ public class CharacterDAO {
         String query = """
             SELECT c.char_id, c.lvl, c.subclass_id, c.subspecies_id, c.bg_id, 
                    c.player_id, c.game_id, c.s_str, c.s_dex, c.s_con, 
-                   c.s_int, c.s_wis, c.s_cha
+                   c.s_int, c.s_wis, c.s_cha,
+                   sc.class_id, ss.species_id
             FROM characters c
+            LEFT JOIN subclass sc ON c.subclass_id = sc.subclass_id
+            LEFT JOIN subspecies ss ON c.subspecies_id = ss.subspecies_id
             ORDER BY c.char_id
             """;
 
@@ -28,7 +31,9 @@ public class CharacterDAO {
                 Character character = new Character(
                         rs.getString("char_id"),
                         rs.getInt("lvl"),
+                        rs.getString("class_id"),
                         rs.getString("subclass_id"),
+                        rs.getString("species_id"),
                         rs.getString("subspecies_id"),
                         rs.getString("bg_id"),
                         rs.getInt("player_id"),
@@ -48,14 +53,17 @@ public class CharacterDAO {
 
     public List<Map<String, Object>> getCharactersWithDetails() throws SQLException {
         String query = """
-            SELECT c.char_id, c.lvl, sc.subclass_id, sp.subspecies_id, 
+            SELECT c.char_id, c.lvl, sc.subclass_id, ss.subspecies_id, 
                    c.bg_id, p.fname, p.lname, g.game_id,
-                   c.s_str, c.s_dex, c.s_con, c.s_int, c.s_wis, c.s_cha
+                   c.s_str, c.s_dex, c.s_con, c.s_int, c.s_wis, c.s_cha,
+                   cl.class_id, sp.species_id
             FROM characters c
             LEFT JOIN player p ON c.player_id = p.player_id
             LEFT JOIN game g ON c.game_id = g.game_id
             LEFT JOIN subclass sc ON c.subclass_id = sc.subclass_id
-            LEFT JOIN subspecies sp ON c.subspecies_id = sp.subspecies_id
+            LEFT JOIN subspecies ss ON c.subspecies_id = ss.subspecies_id
+            LEFT JOIN class cl ON sc.class_id = cl.class_id
+            LEFT JOIN species sp ON ss.species_id = sp.species_id
             ORDER BY c.char_id
             """;
 
@@ -127,10 +135,14 @@ public class CharacterDAO {
     public List<Character> getCharactersByPlayer(int playerId) throws SQLException {
         List<Character> characters = new ArrayList<>();
         String query = """
-            SELECT char_id, lvl, subclass_id, subspecies_id, bg_id, 
-                   player_id, game_id, s_str, s_dex, s_con, s_int, s_wis, s_cha
-            FROM characters WHERE player_id = ?
-            ORDER BY char_id
+            SELECT c.char_id, c.lvl, c.subclass_id, c.subspecies_id, c.bg_id, 
+                   c.player_id, c.game_id, c.s_str, c.s_dex, c.s_con, c.s_int, c.s_wis, c.s_cha,
+                   sc.class_id, ss.species_id
+            FROM characters c
+            LEFT JOIN subclass sc ON c.subclass_id = sc.subclass_id
+            LEFT JOIN subspecies ss ON c.subspecies_id = ss.subspecies_id
+            WHERE c.player_id = ?
+            ORDER BY c.char_id
             """;
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -140,7 +152,9 @@ public class CharacterDAO {
                     Character character = new Character(
                             rs.getString("char_id"),
                             rs.getInt("lvl"),
+                            rs.getString("class_id"),
                             rs.getString("subclass_id"),
+                            rs.getString("species_id"),
                             rs.getString("subspecies_id"),
                             rs.getString("bg_id"),
                             rs.getInt("player_id"),

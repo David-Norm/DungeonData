@@ -3,6 +3,7 @@ import java.awt.*;
 
 class PlayerCreationDialog extends JDialog {
     private DnDController controller;
+    private DnDMainView mainView;
     private boolean playerCreated = false;
 
     private JTextField fnameField;
@@ -11,9 +12,10 @@ class PlayerCreationDialog extends JDialog {
     private JTextField contactInfoField;
     private JComboBox<String> timezoneCombo;
 
-    public PlayerCreationDialog(JFrame parent, DnDController controller) {
+    public PlayerCreationDialog(JFrame parent, DnDController controller, DnDMainView mainView) {
         super(parent, "Add New Player", true);
         this.controller = controller;
+        this.mainView = mainView;
         initializeComponents();
         setupLayout();
         pack();
@@ -65,7 +67,10 @@ class PlayerCreationDialog extends JDialog {
         JButton cancelBtn = new JButton("Cancel");
 
         createBtn.addActionListener(e -> createPlayer());
-        cancelBtn.addActionListener(e -> dispose());
+        cancelBtn.addActionListener(e -> {
+            mainView.showInfoMessage("Player creation cancelled");
+            dispose();
+        });
 
         buttonPanel.add(createBtn);
         buttonPanel.add(cancelBtn);
@@ -77,25 +82,41 @@ class PlayerCreationDialog extends JDialog {
     }
 
     private void createPlayer() {
-        String firstName = fnameField.getText().trim();
-        if (firstName.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "First name is required!");
-            return;
-        }
+        try {
+            String firstName = fnameField.getText().trim();
+            if (firstName.isEmpty()) {
+                mainView.showWarningMessage("First name is required for player creation");
+                fnameField.requestFocus();
+                return;
+            }
 
-        Player player = new Player();
-        player.setFirstName(firstName);
-        player.setLastName(lnameField.getText().trim().isEmpty() ? null : lnameField.getText().trim());
-        player.setPreferredContact((String) contactCombo.getSelectedItem());
-        player.setContactInfo(contactInfoField.getText().trim());
-        player.setTimeZone((String) timezoneCombo.getSelectedItem());
+            String lastName = lnameField.getText().trim();
+            String contactInfo = contactInfoField.getText().trim();
 
-        if (controller.createPlayer(player)) {
-            playerCreated = true;
-            JOptionPane.showMessageDialog(this, "Player created successfully!");
-            dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "Failed to create player.");
+            if (contactInfo.isEmpty()) {
+                mainView.showWarningMessage("Contact information is required");
+                contactInfoField.requestFocus();
+                return;
+            }
+
+            Player player = new Player();
+            player.setFirstName(firstName);
+            player.setLastName(lastName.isEmpty() ? null : lastName);
+            player.setPreferredContact((String) contactCombo.getSelectedItem());
+            player.setContactInfo(contactInfo);
+            player.setTimeZone((String) timezoneCombo.getSelectedItem());
+
+            if (controller.createPlayer(player)) {
+                playerCreated = true;
+                String fullName = player.getFullName();
+                mainView.showSuccessMessage("Player '" + fullName + "' created successfully!");
+                dispose();
+            } else {
+                mainView.showErrorMessage("Failed to create player - please check the information and try again");
+            }
+
+        } catch (Exception e) {
+            mainView.showErrorMessage("Error creating player: " + e.getMessage());
         }
     }
 

@@ -8,11 +8,13 @@ import java.util.Vector;
 // CharacterView.java - Panel for viewing and managing characters
 class CharacterView extends JPanel {
     private DnDController controller;
+    private DnDMainView mainView;
     private JTable characterTable;
     private DefaultTableModel tableModel;
 
-    public CharacterView(DnDController controller) {
+    public CharacterView(DnDController controller, DnDMainView mainView) {
         this.controller = controller;
+        this.mainView = mainView;
         initializeComponents();
         setupLayout();
         refreshData();
@@ -52,101 +54,121 @@ class CharacterView extends JPanel {
     }
 
     public void refreshData() {
-        List<Map<String, Object>> characters = controller.getCharactersWithDetails();
+        try {
+            List<Map<String, Object>> characters = controller.getCharactersWithDetails();
 
-        Vector<String> columnNames = new Vector<>();
-        columnNames.add("Character Name");
-        columnNames.add("Level");
-        columnNames.add("Subclass");
-        columnNames.add("Subspecies");
-        columnNames.add("Background");
-        columnNames.add("Player");
-        columnNames.add("Campaign");
-        columnNames.add("STR");
-        columnNames.add("DEX");
-        columnNames.add("CON");
-        columnNames.add("INT");
-        columnNames.add("WIS");
-        columnNames.add("CHA");
+            Vector<String> columnNames = new Vector<>();
+            columnNames.add("Character Name");
+            columnNames.add("Level");
+            columnNames.add("Class");
+            columnNames.add("Subclass");
+            columnNames.add("Species");
+            columnNames.add("Subspecies");
+            columnNames.add("Background");
+            columnNames.add("Player");
+            columnNames.add("Campaign");
+            columnNames.add("STR");
+            columnNames.add("DEX");
+            columnNames.add("CON");
+            columnNames.add("INT");
+            columnNames.add("WIS");
+            columnNames.add("CHA");
 
-        Vector<Vector<Object>> data = new Vector<>();
-        for (Map<String, Object> character : characters) {
-            Vector<Object> row = new Vector<>();
-            row.add(character.get("char_id"));
-            row.add(character.get("lvl"));
-            row.add(character.get("subclass_id"));
-            row.add(character.get("subspecies_id"));
-            row.add(character.get("bg_id"));
+            Vector<Vector<Object>> data = new Vector<>();
+            for (Map<String, Object> character : characters) {
+                Vector<Object> row = new Vector<>();
+                row.add(character.get("char_id"));
+                row.add(character.get("lvl"));
+                row.add(character.get("class_id"));
+                row.add(character.get("subclass_id"));
+                row.add(character.get("species_id"));
+                row.add(character.get("subspecies_id"));
+                row.add(character.get("bg_id"));
 
-            String playerName = "";
-            if (character.get("fname") != null) {
-                playerName = character.get("fname").toString();
-                if (character.get("lname") != null) {
-                    playerName += " " + character.get("lname").toString();
+                String playerName = "";
+                if (character.get("fname") != null) {
+                    playerName = character.get("fname").toString();
+                    if (character.get("lname") != null) {
+                        playerName += " " + character.get("lname").toString();
+                    }
                 }
-            }
-            row.add(playerName);
-            row.add(character.get("game_id"));
-            row.add(character.get("s_str"));
-            row.add(character.get("s_dex"));
-            row.add(character.get("s_con"));
-            row.add(character.get("s_int"));
-            row.add(character.get("s_wis"));
-            row.add(character.get("s_cha"));
+                row.add(playerName);
+                row.add(character.get("game_id"));
+                row.add(character.get("s_str"));
+                row.add(character.get("s_dex"));
+                row.add(character.get("s_con"));
+                row.add(character.get("s_int"));
+                row.add(character.get("s_wis"));
+                row.add(character.get("s_cha"));
 
-            data.add(row);
+                data.add(row);
+            }
+
+            tableModel = new DefaultTableModel(data, columnNames) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false; // Make table read-only
+                }
+            };
+            characterTable.setModel(tableModel);
+
+            // Auto-resize columns
+            characterTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+            mainView.showSuccessMessage("Loaded " + characters.size() + " characters");
+
+        } catch (Exception e) {
+            mainView.showErrorMessage("Failed to load characters: " + e.getMessage());
         }
-
-        tableModel = new DefaultTableModel(data, columnNames) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // Make table read-only
-            }
-        };
-        characterTable.setModel(tableModel);
-
-        // Auto-resize columns
-        characterTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
     }
 
     private void editSelectedCharacter() {
         int selectedRow = characterTable.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a character to edit.");
+            mainView.showWarningMessage("Please select a character to edit");
             return;
         }
 
         String charName = (String) characterTable.getValueAt(selectedRow, 0);
-        JOptionPane.showMessageDialog(this, "Edit functionality for " + charName + " would be implemented here.\nFor now, use the Character Creator to make new characters.");
+        mainView.showInfoMessage("Edit functionality for " + charName + " not yet implemented - use Character Creator for new characters");
     }
 
     private void deleteSelectedCharacter() {
         int selectedRow = characterTable.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a character to delete.");
+            mainView.showWarningMessage("Please select a character to delete");
             return;
         }
 
         String charName = (String) characterTable.getValueAt(selectedRow, 0);
+
+        // Still use a confirmation dialog for destructive actions
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Are you sure you want to delete character: " + charName + "?",
                 "Confirm Delete",
-                JOptionPane.YES_NO_OPTION);
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
 
         if (confirm == JOptionPane.YES_OPTION) {
-            if (controller.deleteCharacter(charName)) {
-                JOptionPane.showMessageDialog(this, "Character deleted successfully!");
-                refreshData();
-            } else {
-                JOptionPane.showMessageDialog(this, "Failed to delete character.");
+            try {
+                if (controller.deleteCharacter(charName)) {
+                    mainView.showSuccessMessage("Character '" + charName + "' deleted successfully");
+                    refreshData();
+                } else {
+                    mainView.showErrorMessage("Failed to delete character '" + charName + "'");
+                }
+            } catch (Exception e) {
+                mainView.showErrorMessage("Error deleting character: " + e.getMessage());
             }
+        } else {
+            mainView.showInfoMessage("Delete operation cancelled");
         }
     }
 
     private void viewCharacterDetails() {
         int selectedRow = characterTable.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a character to view.");
+            mainView.showWarningMessage("Please select a character to view details");
             return;
         }
 
@@ -161,13 +183,30 @@ class CharacterView extends JPanel {
             details.append(columnName).append(": ").append(value).append("\n");
         }
 
+        // Add computed information
+        String charName = (String) characterTable.getValueAt(selectedRow, 0);
+        String className = (String) characterTable.getValueAt(selectedRow, 2);
+        String subclassName = (String) characterTable.getValueAt(selectedRow, 3);
+        String speciesName = (String) characterTable.getValueAt(selectedRow, 4);
+        String subspeciesName = (String) characterTable.getValueAt(selectedRow, 5);
+
+        details.append("\n--- FORMATTED INFO ---\n");
+        if (className != null && subclassName != null) {
+            details.append("Full Class: ").append(className).append(" (").append(subclassName).append(")\n");
+        }
+        if (speciesName != null && subspeciesName != null) {
+            details.append("Full Species: ").append(speciesName).append(" (").append(subspeciesName).append(")\n");
+        }
+
         JTextArea textArea = new JTextArea(details.toString());
         textArea.setEditable(false);
         textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 
         JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setPreferredSize(new Dimension(400, 300));
+        scrollPane.setPreferredSize(new Dimension(500, 400));
 
-        JOptionPane.showMessageDialog(this, scrollPane, "Character Details", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, scrollPane, "Character Details: " + charName, JOptionPane.INFORMATION_MESSAGE);
+
+        mainView.showInfoMessage("Viewing details for character '" + charName + "'");
     }
 }
