@@ -1,6 +1,6 @@
 /**
  * Player management view for displaying and managing player data.
- * Provides functionality to view players, add new players, and view their characters.
+ * Provides functionality to view players, add new players, delete players, and view their characters.
  *
  * @author David Norman
  * @version Summer 2025
@@ -51,14 +51,17 @@ public class PlayerView extends JPanel {
         JPanel buttonPanel = new JPanel(new FlowLayout());
         JButton refreshBtn = new JButton("Refresh");
         JButton addBtn = new JButton("Add Player");
+        JButton deleteBtn = new JButton("Delete Player");
         JButton viewCharactersBtn = new JButton("View Player's Characters");
 
         refreshBtn.addActionListener(e -> refreshData());
         addBtn.addActionListener(e -> showAddPlayerDialog());
+        deleteBtn.addActionListener(e -> deleteSelectedPlayer());
         viewCharactersBtn.addActionListener(e -> viewPlayerCharacters());
 
         buttonPanel.add(refreshBtn);
         buttonPanel.add(addBtn);
+        buttonPanel.add(deleteBtn);
         buttonPanel.add(viewCharactersBtn);
 
         add(scrollPane, BorderLayout.CENTER);
@@ -128,6 +131,65 @@ public class PlayerView extends JPanel {
     }
 
     /**
+     * Deletes the selected player after confirmation and validation.
+     */
+    private void deleteSelectedPlayer() {
+        int selectedRow = myPlayerTable.getSelectedRow();
+        if (selectedRow == -1) {
+            myMainView.showWarningMessage("Please select a player to delete");
+            return;
+        }
+
+        try {
+            int playerId = (Integer) myPlayerTable.getValueAt(selectedRow, 0);
+            String firstName = (String) myPlayerTable.getValueAt(selectedRow, 1);
+            String lastName = (String) myPlayerTable.getValueAt(selectedRow, 2);
+            String playerName = firstName + (lastName != null ? " " + lastName : "");
+
+            // Check if player has characters
+            if (myController.playerHasCharacters(playerId)) {
+                int characterCount = myController.getPlayerCharacterCount(playerId);
+
+                // Show warning about characters
+                int choice = JOptionPane.showConfirmDialog(this,
+                        "Player '" + playerName + "' has " + characterCount + " character(s).\n" +
+                                "You cannot delete a player who has characters.\n\n" +
+                                "Would you like to view the player's characters?",
+                        "Cannot Delete Player",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE);
+
+                if (choice == JOptionPane.YES_OPTION) {
+                    viewPlayerCharacters();
+                }
+                return;
+            }
+
+            // Confirm deletion for players with no characters
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "Are you sure you want to delete player: " + playerName + "?\n" +
+                            "This action cannot be undone.",
+                    "Confirm Delete Player",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                if (myController.deletePlayer(playerId)) {
+                    myMainView.showSuccessMessage("Player '" + playerName + "' deleted successfully");
+                    refreshData();
+                } else {
+                    myMainView.showErrorMessage("Failed to delete player '" + playerName + "'");
+                }
+            } else {
+                myMainView.showInfoMessage("Player deletion cancelled");
+            }
+
+        } catch (Exception e) {
+            myMainView.showErrorMessage("Error deleting player: " + e.getMessage());
+        }
+    }
+
+    /**
      * Displays characters belonging to the selected player.
      */
     private void viewPlayerCharacters() {
@@ -158,17 +220,22 @@ public class PlayerView extends JPanel {
                         .append(" ").append(character.getFullClass())
                         .append(" ").append(character.getFullSpecies())
                         .append(")\n");
+                characterList.append("  Campaign: ").append(character.getGameId()).append("\n");
+                characterList.append("  Background: ").append(character.getBackgroundId()).append("\n\n");
             }
+
+            characterList.append("Note: To delete this player, you must first delete or reassign all their characters.");
 
             JTextArea textArea = new JTextArea(characterList.toString());
             textArea.setEditable(false);
             textArea.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
 
             JScrollPane scrollPane = new JScrollPane(textArea);
-            scrollPane.setPreferredSize(new Dimension(400, 300));
+            scrollPane.setPreferredSize(new Dimension(500, 400));
 
             JOptionPane.showMessageDialog(this, scrollPane,
-                    "Characters for " + playerName, JOptionPane.INFORMATION_MESSAGE);
+                    "Characters for " + playerName + " (" + playerCharacters.size() + " characters)",
+                    JOptionPane.INFORMATION_MESSAGE);
 
             myMainView.showInfoMessage("Viewing " + playerCharacters.size() + " characters for " + playerName);
 

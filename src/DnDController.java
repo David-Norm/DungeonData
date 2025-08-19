@@ -154,6 +154,51 @@ public class DnDController {
     }
 
     /**
+     * Deletes a player from the database.
+     *
+     * @param thePlayerId the ID of the player to delete
+     * @return true if deletion was successful, false otherwise
+     */
+    public boolean deletePlayer(int thePlayerId) {
+        try {
+            return myPlayerDAO.deletePlayer(thePlayerId);
+        } catch (SQLException e) {
+            handleError("Error deleting player", e);
+            return false;
+        }
+    }
+
+    /**
+     * Checks if a player has any associated characters.
+     *
+     * @param thePlayerId the ID of the player to check
+     * @return true if the player has characters, false otherwise
+     */
+    public boolean playerHasCharacters(int thePlayerId) {
+        try {
+            return myPlayerDAO.playerHasCharacters(thePlayerId);
+        } catch (SQLException e) {
+            handleError("Error checking player characters", e);
+            return false;
+        }
+    }
+
+    /**
+     * Gets the count of characters for a specific player.
+     *
+     * @param thePlayerId the ID of the player
+     * @return the number of characters owned by the player
+     */
+    public int getPlayerCharacterCount(int thePlayerId) {
+        try {
+            return myPlayerDAO.getCharacterCount(thePlayerId);
+        } catch (SQLException e) {
+            handleError("Error getting character count for player", e);
+            return 0;
+        }
+    }
+
+    /**
      * Retrieves all campaigns from the database.
      *
      * @return list of all campaigns

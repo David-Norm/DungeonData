@@ -78,6 +78,62 @@ public class PlayerDAO {
     }
 
     /**
+     * Deletes a player from the database.
+     * Note: This will fail if the player has associated characters due to foreign key constraints.
+     *
+     * @param thePlayerId the ID of the player to delete
+     * @return true if deletion was successful, false otherwise
+     * @throws SQLException if database operation fails
+     */
+    public boolean deletePlayer(int thePlayerId) throws SQLException {
+        String query = "DELETE FROM player WHERE player_id = ?";
+        try (PreparedStatement stmt = myConnection.prepareStatement(query)) {
+            stmt.setInt(1, thePlayerId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Checks if a player has any associated characters.
+     *
+     * @param thePlayerId the ID of the player to check
+     * @return true if the player has characters, false otherwise
+     * @throws SQLException if database query fails
+     */
+    public boolean playerHasCharacters(int thePlayerId) throws SQLException {
+        String query = "SELECT COUNT(*) FROM characters WHERE player_id = ?";
+        try (PreparedStatement stmt = myConnection.prepareStatement(query)) {
+            stmt.setInt(1, thePlayerId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+                return false;
+            }
+        }
+    }
+
+    /**
+     * Gets the count of characters for a specific player.
+     *
+     * @param thePlayerId the ID of the player
+     * @return the number of characters owned by the player
+     * @throws SQLException if database query fails
+     */
+    public int getCharacterCount(int thePlayerId) throws SQLException {
+        String query = "SELECT COUNT(*) FROM characters WHERE player_id = ?";
+        try (PreparedStatement stmt = myConnection.prepareStatement(query)) {
+            stmt.setInt(1, thePlayerId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+                return 0;
+            }
+        }
+    }
+
+    /**
      * Gets the next available player ID.
      *
      * @return the next player ID to use
