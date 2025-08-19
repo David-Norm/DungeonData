@@ -1,6 +1,11 @@
 import java.sql.*;
 
-// DatabaseConnection.java - Singleton for database connection management
+/**
+ *
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 public class DatabaseConnection {
     private static DatabaseConnection instance;
     private Connection connection;

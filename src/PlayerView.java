@@ -4,7 +4,13 @@ import java.awt.*;
 import java.util.List;
 import java.util.Vector;
 
-class PlayerView extends JPanel {
+/**
+ *
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
+public class PlayerView extends JPanel {
     private DnDController controller;
     private DnDMainView mainView;
     private JTable playerTable;

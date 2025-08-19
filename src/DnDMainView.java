@@ -3,7 +3,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-// DnDMainView.java - Main window coordinating all view panels
+/**
+ *
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 public class DnDMainView extends JFrame {
     private DnDController controller;
     private JTabbedPane tabbedPane;
@@ -16,6 +21,7 @@ public class DnDMainView extends JFrame {
     private CampaignView campaignView;
     private ClassSpeciesView classSpeciesView;
     private CharacterCreatorView characterCreatorView;
+    private CharacterEditView characterEditView; // NEW: Character edit panel
     private ReportView reportView;
 
     public DnDMainView(DnDController controller) {
@@ -41,6 +47,7 @@ public class DnDMainView extends JFrame {
         campaignView = new CampaignView(controller, this);
         classSpeciesView = new ClassSpeciesView(controller);
         characterCreatorView = new CharacterCreatorView(controller, this);
+        characterEditView = new CharacterEditView(controller, this); // NEW: Initialize edit panel
         reportView = new ReportView(controller, this);
     }
 
@@ -53,6 +60,7 @@ public class DnDMainView extends JFrame {
         tabbedPane.addTab("Campaigns", campaignView);
         tabbedPane.addTab("Classes & Species", classSpeciesView);
         tabbedPane.addTab("Character Creator", characterCreatorView);
+        tabbedPane.addTab("Character Editor", characterEditView); // NEW: Add edit tab
         tabbedPane.addTab("Reports", reportView);
 
         add(tabbedPane, BorderLayout.CENTER);
@@ -136,7 +144,11 @@ public class DnDMainView extends JFrame {
                 characterCreatorView.refreshData();
                 setStatusMessage("Character Creator data refreshed", MessageType.SUCCESS);
             }
-            case 5 -> {
+            case 5 -> { // NEW: Character Editor tab
+                characterEditView.refreshData();
+                setStatusMessage("Character Editor data refreshed", MessageType.SUCCESS);
+            }
+            case 6 -> { // Updated index for Reports
                 reportView.refreshData();
                 setStatusMessage("Reports cleared", MessageType.SUCCESS);
             }
@@ -150,6 +162,7 @@ public class DnDMainView extends JFrame {
         campaignView.refreshData();
         classSpeciesView.refreshData();
         characterCreatorView.refreshData();
+        characterEditView.refreshData(); // NEW: Refresh edit view
         reportView.refreshData();
         setStatusMessage("All data refreshed successfully", MessageType.SUCCESS);
     }
@@ -164,6 +177,7 @@ public class DnDMainView extends JFrame {
                 
                 Features:
                 • Character creation and management
+                • Character editing and modification
                 • Player database with contact information
                 • Campaign tracking and organization
                 • Advanced reporting and analytics
@@ -186,6 +200,13 @@ public class DnDMainView extends JFrame {
         tabbedPane.setSelectedIndex(1);
         playerView.refreshData();
         setStatusMessage("Switched to Players tab", MessageType.INFO);
+    }
+
+    // NEW: Method to switch to character editor and edit a specific character
+    public void switchToCharacterEditor(Character character) {
+        tabbedPane.setSelectedIndex(5); // Character Editor tab
+        characterEditView.editCharacter(character);
+        setStatusMessage("Editing character: " + character.getCharId(), MessageType.INFO);
     }
 
     public DnDController getController() {

@@ -1,3 +1,9 @@
+/**
+ *
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 public class Campaign {
     private String gameId;
     private String setting;

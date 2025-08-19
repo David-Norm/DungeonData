@@ -5,8 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-// CharacterView.java - Panel for viewing and managing characters
-class CharacterView extends JPanel {
+/**
+ *
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
+public class CharacterView extends JPanel {
     private DnDController controller;
     private DnDMainView mainView;
     private JTable characterTable;
@@ -40,7 +45,7 @@ class CharacterView extends JPanel {
         JButton viewDetailsBtn = new JButton("View Details");
 
         refreshBtn.addActionListener(e -> refreshData());
-        editBtn.addActionListener(e -> editSelectedCharacter());
+        editBtn.addActionListener(e -> editSelectedCharacter()); // UPDATED: Now functional
         deleteBtn.addActionListener(e -> deleteSelectedCharacter());
         viewDetailsBtn.addActionListener(e -> viewCharacterDetails());
 
@@ -122,6 +127,7 @@ class CharacterView extends JPanel {
         }
     }
 
+    // UPDATED: Now fully implements character editing functionality
     private void editSelectedCharacter() {
         int selectedRow = characterTable.getSelectedRow();
         if (selectedRow == -1) {
@@ -129,8 +135,46 @@ class CharacterView extends JPanel {
             return;
         }
 
-        String charName = (String) characterTable.getValueAt(selectedRow, 0);
-        mainView.showInfoMessage("Edit functionality for " + charName + " not yet implemented - use Character Creator for new characters");
+        try {
+            // Extract character data from the selected row
+            String charName = (String) characterTable.getValueAt(selectedRow, 0);
+            Integer level = (Integer) characterTable.getValueAt(selectedRow, 1);
+            String className = (String) characterTable.getValueAt(selectedRow, 2);
+            String subclassName = (String) characterTable.getValueAt(selectedRow, 3);
+            String speciesName = (String) characterTable.getValueAt(selectedRow, 4);
+            String subspeciesName = (String) characterTable.getValueAt(selectedRow, 5);
+            String backgroundName = (String) characterTable.getValueAt(selectedRow, 6);
+            String playerName = (String) characterTable.getValueAt(selectedRow, 7);
+            String campaignName = (String) characterTable.getValueAt(selectedRow, 8);
+            Integer str = (Integer) characterTable.getValueAt(selectedRow, 9);
+            Integer dex = (Integer) characterTable.getValueAt(selectedRow, 10);
+            Integer con = (Integer) characterTable.getValueAt(selectedRow, 11);
+            Integer intel = (Integer) characterTable.getValueAt(selectedRow, 12);
+            Integer wis = (Integer) characterTable.getValueAt(selectedRow, 13);
+            Integer cha = (Integer) characterTable.getValueAt(selectedRow, 14);
+
+            // Find the player ID from the player name
+            int playerId = 0;
+            List<Player> players = controller.getAllPlayers();
+            for (Player player : players) {
+                if (player.getFullName().equals(playerName)) {
+                    playerId = player.getPlayerId();
+                    break;
+                }
+            }
+
+            // Create a Character object with the current data
+            Character characterToEdit = new Character(
+                    charName, level, className, subclassName, speciesName, subspeciesName,
+                    backgroundName, playerId, campaignName, str, dex, con, intel, wis, cha
+            );
+
+            // Switch to the character editor tab and load this character
+            mainView.switchToCharacterEditor(characterToEdit);
+
+        } catch (Exception e) {
+            mainView.showErrorMessage("Error loading character for editing: " + e.getMessage());
+        }
     }
 
     private void deleteSelectedCharacter() {
@@ -198,6 +242,26 @@ class CharacterView extends JPanel {
             details.append("Full Species: ").append(speciesName).append(" (").append(subspeciesName).append(")\n");
         }
 
+        // Add ability modifiers
+        details.append("\n--- ABILITY MODIFIERS ---\n");
+        try {
+            Integer str = (Integer) characterTable.getValueAt(selectedRow, 9);
+            Integer dex = (Integer) characterTable.getValueAt(selectedRow, 10);
+            Integer con = (Integer) characterTable.getValueAt(selectedRow, 11);
+            Integer intel = (Integer) characterTable.getValueAt(selectedRow, 12);
+            Integer wis = (Integer) characterTable.getValueAt(selectedRow, 13);
+            Integer cha = (Integer) characterTable.getValueAt(selectedRow, 14);
+
+            details.append("STR: ").append(str).append(" (").append(getModifierString(str)).append(")\n");
+            details.append("DEX: ").append(dex).append(" (").append(getModifierString(dex)).append(")\n");
+            details.append("CON: ").append(con).append(" (").append(getModifierString(con)).append(")\n");
+            details.append("INT: ").append(intel).append(" (").append(getModifierString(intel)).append(")\n");
+            details.append("WIS: ").append(wis).append(" (").append(getModifierString(wis)).append(")\n");
+            details.append("CHA: ").append(cha).append(" (").append(getModifierString(cha)).append(")\n");
+        } catch (Exception e) {
+            details.append("Error calculating ability modifiers\n");
+        }
+
         JTextArea textArea = new JTextArea(details.toString());
         textArea.setEditable(false);
         textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
@@ -208,5 +272,12 @@ class CharacterView extends JPanel {
         JOptionPane.showMessageDialog(this, scrollPane, "Character Details: " + charName, JOptionPane.INFORMATION_MESSAGE);
 
         mainView.showInfoMessage("Viewing details for character '" + charName + "'");
+    }
+
+    // Helper method to format ability score modifiers
+    private String getModifierString(Integer score) {
+        if (score == null) return "+0";
+        int modifier = (score - 10) / 2;
+        return modifier >= 0 ? "+" + modifier : String.valueOf(modifier);
     }
 }

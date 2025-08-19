@@ -1,7 +1,12 @@
 import java.sql.*;
 import java.util.*;
 
-// ReportDAO.java - Data Access Object for the 10 provided SQL queries only
+/**
+ *
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 public class ReportDAO {
     private Connection connection;
 

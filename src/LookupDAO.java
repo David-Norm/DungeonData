@@ -5,6 +5,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 public class LookupDAO {
     private Connection connection;
 

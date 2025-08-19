@@ -5,7 +5,13 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.List;
 
-class ReportView extends JPanel {
+/**
+ *
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
+public class ReportView extends JPanel {
     private DnDController controller;
     private DnDMainView mainView;
     private JTable resultsTable;

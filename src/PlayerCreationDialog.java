@@ -1,6 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ *
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 class PlayerCreationDialog extends JDialog {
     private DnDController controller;
     private DnDMainView mainView;

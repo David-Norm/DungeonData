@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 /**
@@ -10,12 +8,13 @@ import java.util.List;
  * @author David Norman
  * @version Summer 2025
  */
-public class CharacterCreatorView extends JPanel {
+public class CharacterEditView extends JPanel {
     private DnDController controller;
     private DnDMainView mainView;
+    private Character currentCharacter;
 
     // Form components
-    private JTextField nameField;
+    private JLabel nameLabel;
     private JSpinner levelSpinner;
     private JComboBox<String> classCombo;
     private JComboBox<String> subclassCombo;
@@ -26,16 +25,24 @@ public class CharacterCreatorView extends JPanel {
     private JComboBox<Campaign> campaignCombo;
     private JSpinner[] abilitySpinners;
 
-    public CharacterCreatorView(DnDController controller, DnDMainView mainView) {
+    // Control buttons
+    private JButton saveBtn;
+    private JButton cancelBtn;
+    private JButton rollStatsBtn;
+
+    public CharacterEditView(DnDController controller, DnDMainView mainView) {
         this.controller = controller;
         this.mainView = mainView;
         initializeComponents();
         setupLayout();
-        refreshData();
+        setVisible(false); // Initially hidden
     }
 
     private void initializeComponents() {
-        nameField = new JTextField(20);
+        nameLabel = new JLabel("No character selected");
+        nameLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
+        nameLabel.setHorizontalAlignment(JLabel.CENTER);
+
         levelSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 20, 1));
         classCombo = new JComboBox<>();
         subclassCombo = new JComboBox<>();
@@ -54,100 +61,107 @@ public class CharacterCreatorView extends JPanel {
         for (int i = 0; i < 6; i++) {
             abilitySpinners[i] = new JSpinner(new SpinnerNumberModel(10, 0, 30, 1));
         }
+
+        // Control buttons
+        saveBtn = new JButton("Save Changes");
+        cancelBtn = new JButton("Cancel Edit");
+        rollStatsBtn = new JButton("Roll Random Stats");
+
+        saveBtn.addActionListener(e -> saveCharacter());
+        cancelBtn.addActionListener(e -> cancelEdit());
+        rollStatsBtn.addActionListener(e -> rollRandomStats());
     }
 
     private void setupLayout() {
         setLayout(new BorderLayout());
 
+        // Header panel with character name
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Edit Character"),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
+        headerPanel.add(nameLabel, BorderLayout.CENTER);
+
+        // Main form panel
         JPanel mainPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Character Name
-        gbc.gridx = 0; gbc.gridy = 0;
-        mainPanel.add(new JLabel("Character Name:"), gbc);
-        gbc.gridx = 1;
-        mainPanel.add(nameField, gbc);
-
         // Level
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx = 0; gbc.gridy = 0;
         mainPanel.add(new JLabel("Level:"), gbc);
         gbc.gridx = 1;
         mainPanel.add(levelSpinner, gbc);
 
         // Class
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0; gbc.gridy = 1;
         mainPanel.add(new JLabel("Class:"), gbc);
         gbc.gridx = 1;
         mainPanel.add(classCombo, gbc);
 
         // Subclass
-        gbc.gridx = 0; gbc.gridy = 3;
+        gbc.gridx = 0; gbc.gridy = 2;
         mainPanel.add(new JLabel("Subclass:"), gbc);
         gbc.gridx = 1;
         mainPanel.add(subclassCombo, gbc);
 
         // Species
-        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridx = 0; gbc.gridy = 3;
         mainPanel.add(new JLabel("Species:"), gbc);
         gbc.gridx = 1;
         mainPanel.add(speciesCombo, gbc);
 
         // Subspecies
-        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.gridx = 0; gbc.gridy = 4;
         mainPanel.add(new JLabel("Subspecies:"), gbc);
         gbc.gridx = 1;
         mainPanel.add(subspeciesCombo, gbc);
 
         // Background
-        gbc.gridx = 0; gbc.gridy = 6;
+        gbc.gridx = 0; gbc.gridy = 5;
         mainPanel.add(new JLabel("Background:"), gbc);
         gbc.gridx = 1;
         mainPanel.add(backgroundCombo, gbc);
 
         // Player
-        gbc.gridx = 0; gbc.gridy = 7;
+        gbc.gridx = 0; gbc.gridy = 6;
         mainPanel.add(new JLabel("Player:"), gbc);
         gbc.gridx = 1;
         mainPanel.add(playerCombo, gbc);
 
         // Campaign
-        gbc.gridx = 0; gbc.gridy = 8;
+        gbc.gridx = 0; gbc.gridy = 7;
         mainPanel.add(new JLabel("Campaign:"), gbc);
         gbc.gridx = 1;
         mainPanel.add(campaignCombo, gbc);
 
         // Ability Scores Panel
         JPanel abilityPanel = createAbilityScorePanel();
-        gbc.gridx = 0; gbc.gridy = 9;
+        gbc.gridx = 0; gbc.gridy = 8;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainPanel.add(abilityPanel, gbc);
 
         // Button Panel
         JPanel buttonPanel = new JPanel(new FlowLayout());
-        JButton createBtn = new JButton("Create Character");
-        JButton clearBtn = new JButton("Clear Form");
-        JButton rollStatsBtn = new JButton("Roll Random Stats");
-
-        createBtn.addActionListener(e -> createCharacter());
-        clearBtn.addActionListener(e -> clearForm());
-        rollStatsBtn.addActionListener(e -> rollRandomStats());
-
-        buttonPanel.add(createBtn);
-        buttonPanel.add(clearBtn);
+        buttonPanel.add(saveBtn);
+        buttonPanel.add(cancelBtn);
         buttonPanel.add(rollStatsBtn);
 
-        gbc.gridy = 10;
+        gbc.gridy = 9;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
         mainPanel.add(buttonPanel, gbc);
 
-        // Wrap in scroll pane
+        // Wrap main panel in scroll pane
         JScrollPane scrollPane = new JScrollPane(mainPanel);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Create New Character"));
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
+        // Add to layout
+        add(headerPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
     }
 
@@ -170,6 +184,77 @@ public class CharacterCreatorView extends JPanel {
         return panel;
     }
 
+    public void editCharacter(Character character) {
+        this.currentCharacter = character;
+        nameLabel.setText("Editing: " + character.getCharId());
+
+        // Load data first
+        refreshData();
+
+        // Then populate fields
+        populateFields();
+
+        // Show the panel
+        setVisible(true);
+        mainView.showInfoMessage("Editing character: " + character.getCharId());
+    }
+
+    private void populateFields() {
+        if (currentCharacter == null) return;
+
+        // Set basic info
+        levelSpinner.setValue(currentCharacter.getLevel());
+
+        // Set class and trigger subclass update
+        if (currentCharacter.getClassId() != null) {
+            classCombo.setSelectedItem(currentCharacter.getClassId());
+            updateSubclasses();
+            if (currentCharacter.getSubclassId() != null) {
+                subclassCombo.setSelectedItem(currentCharacter.getSubclassId());
+            }
+        }
+
+        // Set species and trigger subspecies update
+        if (currentCharacter.getSpeciesId() != null) {
+            speciesCombo.setSelectedItem(currentCharacter.getSpeciesId());
+            updateSubspecies();
+            if (currentCharacter.getSubspeciesId() != null) {
+                subspeciesCombo.setSelectedItem(currentCharacter.getSubspeciesId());
+            }
+        }
+
+        // Set background
+        if (currentCharacter.getBackgroundId() != null) {
+            backgroundCombo.setSelectedItem(currentCharacter.getBackgroundId());
+        }
+
+        // Set player
+        for (int i = 0; i < playerCombo.getItemCount(); i++) {
+            Player player = playerCombo.getItemAt(i);
+            if (player.getPlayerId() == currentCharacter.getPlayerId()) {
+                playerCombo.setSelectedItem(player);
+                break;
+            }
+        }
+
+        // Set campaign
+        for (int i = 0; i < campaignCombo.getItemCount(); i++) {
+            Campaign campaign = campaignCombo.getItemAt(i);
+            if (campaign.getGameId().equals(currentCharacter.getGameId())) {
+                campaignCombo.setSelectedItem(campaign);
+                break;
+            }
+        }
+
+        // Set ability scores
+        abilitySpinners[0].setValue(currentCharacter.getStrength());
+        abilitySpinners[1].setValue(currentCharacter.getDexterity());
+        abilitySpinners[2].setValue(currentCharacter.getConstitution());
+        abilitySpinners[3].setValue(currentCharacter.getIntelligence());
+        abilitySpinners[4].setValue(currentCharacter.getWisdom());
+        abilitySpinners[5].setValue(currentCharacter.getCharisma());
+    }
+
     public void refreshData() {
         try {
             // Load classes
@@ -178,7 +263,6 @@ public class CharacterCreatorView extends JPanel {
             for (String dndClass : classes) {
                 classCombo.addItem(dndClass);
             }
-            mainView.showInfoMessage("Loaded " + classes.size() + " classes");
 
             // Load species
             speciesCombo.removeAllItems();
@@ -208,16 +292,8 @@ public class CharacterCreatorView extends JPanel {
                 campaignCombo.addItem(campaign);
             }
 
-            // Update subclasses and subspecies for initially selected items
-            updateSubclasses();
-            updateSubspecies();
-
-            mainView.showSuccessMessage("Character creation form loaded with " + classes.size() + " classes, " +
-                    species.size() + " species, " + players.size() + " players, and " +
-                    campaigns.size() + " campaigns");
-
         } catch (Exception e) {
-            mainView.showErrorMessage("Failed to load character creation data: " + e.getMessage());
+            mainView.showErrorMessage("Failed to load character edit data: " + e.getMessage());
         }
     }
 
@@ -229,7 +305,6 @@ public class CharacterCreatorView extends JPanel {
             for (String subclass : subclasses) {
                 subclassCombo.addItem(subclass);
             }
-            mainView.showInfoMessage("Loaded " + subclasses.size() + " subclasses for " + selectedClass);
         }
     }
 
@@ -241,7 +316,6 @@ public class CharacterCreatorView extends JPanel {
             for (String subspecie : subspecies) {
                 subspeciesCombo.addItem(subspecie);
             }
-            mainView.showInfoMessage("Loaded " + subspecies.size() + " subspecies for " + selectedSpecies);
         }
     }
 
@@ -259,14 +333,13 @@ public class CharacterCreatorView extends JPanel {
         mainView.showSuccessMessage("Random ability scores generated using 4d6 drop lowest method");
     }
 
-    private void createCharacter() {
-        try {
-            String charName = nameField.getText().trim();
-            if (charName.isEmpty()) {
-                mainView.showWarningMessage("Character name is required");
-                return;
-            }
+    private void saveCharacter() {
+        if (currentCharacter == null) {
+            mainView.showErrorMessage("No character to save");
+            return;
+        }
 
+        try {
             Player selectedPlayer = (Player) playerCombo.getSelectedItem();
             Campaign selectedCampaign = (Campaign) campaignCombo.getSelectedItem();
 
@@ -280,8 +353,9 @@ public class CharacterCreatorView extends JPanel {
                 return;
             }
 
-            Character character = new Character(
-                    charName,
+            // Create updated character with same ID but new values
+            Character updatedCharacter = new Character(
+                    currentCharacter.getCharId(), // Keep same character ID
                     (Integer) levelSpinner.getValue(),
                     (String) classCombo.getSelectedItem(),
                     (String) subclassCombo.getSelectedItem(),
@@ -298,27 +372,32 @@ public class CharacterCreatorView extends JPanel {
                     (Integer) abilitySpinners[5].getValue()  // CHA
             );
 
-            if (controller.createCharacter(character)) {
-                mainView.showSuccessMessage("Character '" + charName + "' created successfully!");
-                clearForm();
+            if (controller.updateCharacter(updatedCharacter)) {
+                mainView.showSuccessMessage("Character '" + currentCharacter.getCharId() + "' updated successfully!");
 
-                // Optionally switch to Characters tab to see the new character
+                // Hide the edit panel and refresh the character view
+                setVisible(false);
                 mainView.switchToCharactersTab();
             } else {
-                mainView.showErrorMessage("Failed to create character '" + charName + "' - name may already exist");
+                mainView.showErrorMessage("Failed to update character '" + currentCharacter.getCharId() + "'");
             }
 
         } catch (Exception e) {
-            mainView.showErrorMessage("Error creating character: " + e.getMessage());
+            mainView.showErrorMessage("Error updating character: " + e.getMessage());
         }
     }
 
-    private void clearForm() {
-        nameField.setText("");
-        levelSpinner.setValue(1);
-        for (JSpinner spinner : abilitySpinners) {
-            spinner.setValue(10);
-        }
-        mainView.showInfoMessage("Form cleared - ready for new character");
+    private void cancelEdit() {
+        setVisible(false);
+        mainView.showInfoMessage("Character edit cancelled");
+        mainView.switchToCharactersTab();
+    }
+
+    public boolean isEditingCharacter() {
+        return isVisible() && currentCharacter != null;
+    }
+
+    public Character getCurrentCharacter() {
+        return currentCharacter;
     }
 }

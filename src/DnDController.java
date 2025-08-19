@@ -3,7 +3,12 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-// DnDController.java - Main controller coordinating between View and Model
+/**
+ *
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 public class DnDController {
     private DnDMainView mainView;
     private CharacterDAO characterDAO;

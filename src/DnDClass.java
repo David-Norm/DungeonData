@@ -1,3 +1,9 @@
+/**
+ *
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 public class DnDClass {
     private String classId;
     private String classSummary;

@@ -3,10 +3,17 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Vector;
 
-// CampaignView.java - Panel for viewing campaigns
+/**
+ *
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 public class CampaignView extends JPanel {
     private DnDController controller;
     private DnDMainView mainView;
@@ -24,13 +31,77 @@ public class CampaignView extends JPanel {
     private void initializeComponents() {
         campaignTable = new JTable();
         campaignTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        // Add double-click listener for synopsis column
+        campaignTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    handleDoubleClick(e);
+                }
+            }
+        });
+    }
+
+    private void handleDoubleClick(MouseEvent e) {
+        int row = campaignTable.rowAtPoint(e.getPoint());
+        int col = campaignTable.columnAtPoint(e.getPoint());
+
+        if (row >= 0 && col >= 0) {
+            String columnName = campaignTable.getColumnName(col);
+
+            // Check if it's the Synopsis column (index 2)
+            if (columnName.equals("Synopsis")) {
+                try {
+                    String campaignName = (String) campaignTable.getValueAt(row, 0);
+
+                    // Get the full synopsis from the controller
+                    List<Campaign> campaigns = controller.getAllCampaigns();
+                    String fullSynopsis = "";
+
+                    for (Campaign campaign : campaigns) {
+                        if (campaign.getGameId().equals(campaignName)) {
+                            fullSynopsis = campaign.getSynopsis();
+                            break;
+                        }
+                    }
+
+                    if (!fullSynopsis.isEmpty()) {
+                        showTextPopup("Campaign Synopsis: " + campaignName, fullSynopsis);
+                    } else {
+                        mainView.showWarningMessage("No synopsis available for this campaign");
+                    }
+
+                } catch (Exception ex) {
+                    mainView.showErrorMessage("Error loading campaign synopsis: " + ex.getMessage());
+                }
+            }
+        }
+    }
+
+    private void showTextPopup(String title, String text) {
+        JTextArea textArea = new JTextArea(text);
+        textArea.setWrapStyleWord(true);
+        textArea.setLineWrap(true);
+        textArea.setEditable(false);
+        textArea.setRows(20);
+        textArea.setColumns(60);
+        textArea.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+        textArea.setBackground(new Color(248, 248, 248));
+        textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JOptionPane.showMessageDialog(this, scrollPane, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void setupLayout() {
         setLayout(new BorderLayout());
 
         JScrollPane scrollPane = new JScrollPane(campaignTable);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Campaigns"));
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Campaigns - Double-click Synopsis for full text"));
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
         JButton refreshBtn = new JButton("Refresh");

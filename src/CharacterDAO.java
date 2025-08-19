@@ -4,6 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 public class CharacterDAO {
     private Connection connection;
 
