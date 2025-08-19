@@ -1,3 +1,10 @@
+/**
+ * Campaign management view for displaying and interacting with campaign data.
+ * Provides functionality to view campaign details and synopses.
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -8,55 +15,60 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Vector;
 
-/**
- *
- *
- * @author David Norman
- * @version Summer 2025
- */
 public class CampaignView extends JPanel {
-    private DnDController controller;
-    private DnDMainView mainView;
-    private JTable campaignTable;
-    private DefaultTableModel tableModel;
+    private DnDController myController;
+    private DnDMainView myMainView;
+    private JTable myCampaignTable;
+    private DefaultTableModel myTableModel;
 
-    public CampaignView(DnDController controller, DnDMainView mainView) {
-        this.controller = controller;
-        this.mainView = mainView;
+    /**
+     * Constructs a CampaignView with the specified controller and main view.
+     *
+     * @param theController the application controller
+     * @param theMainView the main application view
+     */
+    public CampaignView(DnDController theController, DnDMainView theMainView) {
+        myController = theController;
+        myMainView = theMainView;
         initializeComponents();
         setupLayout();
         refreshData();
     }
 
+    /**
+     * Initializes GUI components.
+     */
     private void initializeComponents() {
-        campaignTable = new JTable();
-        campaignTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        myCampaignTable = new JTable();
+        myCampaignTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        // Add double-click listener for synopsis column
-        campaignTable.addMouseListener(new MouseAdapter() {
+        myCampaignTable.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    handleDoubleClick(e);
+            public void mouseClicked(MouseEvent theEvent) {
+                if (theEvent.getClickCount() == 2) {
+                    handleDoubleClick(theEvent);
                 }
             }
         });
     }
 
-    private void handleDoubleClick(MouseEvent e) {
-        int row = campaignTable.rowAtPoint(e.getPoint());
-        int col = campaignTable.columnAtPoint(e.getPoint());
+    /**
+     * Handles double-click events on the campaign table.
+     *
+     * @param theEvent the mouse event
+     */
+    private void handleDoubleClick(MouseEvent theEvent) {
+        int row = myCampaignTable.rowAtPoint(theEvent.getPoint());
+        int col = myCampaignTable.columnAtPoint(theEvent.getPoint());
 
         if (row >= 0 && col >= 0) {
-            String columnName = campaignTable.getColumnName(col);
+            String columnName = myCampaignTable.getColumnName(col);
 
-            // Check if it's the Synopsis column (index 2)
             if (columnName.equals("Synopsis")) {
                 try {
-                    String campaignName = (String) campaignTable.getValueAt(row, 0);
+                    String campaignName = (String) myCampaignTable.getValueAt(row, 0);
 
-                    // Get the full synopsis from the controller
-                    List<Campaign> campaigns = controller.getAllCampaigns();
+                    List<Campaign> campaigns = myController.getAllCampaigns();
                     String fullSynopsis = "";
 
                     for (Campaign campaign : campaigns) {
@@ -69,18 +81,24 @@ public class CampaignView extends JPanel {
                     if (!fullSynopsis.isEmpty()) {
                         showTextPopup("Campaign Synopsis: " + campaignName, fullSynopsis);
                     } else {
-                        mainView.showWarningMessage("No synopsis available for this campaign");
+                        myMainView.showWarningMessage("No synopsis available for this campaign");
                     }
 
                 } catch (Exception ex) {
-                    mainView.showErrorMessage("Error loading campaign synopsis: " + ex.getMessage());
+                    myMainView.showErrorMessage("Error loading campaign synopsis: " + ex.getMessage());
                 }
             }
         }
     }
 
-    private void showTextPopup(String title, String text) {
-        JTextArea textArea = new JTextArea(text);
+    /**
+     * Shows a text popup dialog with scrollable content.
+     *
+     * @param theTitle the dialog title
+     * @param theText the text content to display
+     */
+    private void showTextPopup(String theTitle, String theText) {
+        JTextArea textArea = new JTextArea(theText);
         textArea.setWrapStyleWord(true);
         textArea.setLineWrap(true);
         textArea.setEditable(false);
@@ -94,13 +112,16 @@ public class CampaignView extends JPanel {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        JOptionPane.showMessageDialog(this, scrollPane, title, JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, scrollPane, theTitle, JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Sets up the panel layout and components.
+     */
     private void setupLayout() {
         setLayout(new BorderLayout());
 
-        JScrollPane scrollPane = new JScrollPane(campaignTable);
+        JScrollPane scrollPane = new JScrollPane(myCampaignTable);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Campaigns - Double-click Synopsis for full text"));
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
@@ -117,9 +138,12 @@ public class CampaignView extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * Refreshes the campaign data from the database.
+     */
     public void refreshData() {
         try {
-            List<Campaign> campaigns = controller.getAllCampaigns();
+            List<Campaign> campaigns = myController.getAllCampaigns();
 
             Vector<String> columnNames = new Vector<String>();
             columnNames.add("Campaign Name");
@@ -141,51 +165,49 @@ public class CampaignView extends JPanel {
                 data.add(row);
             }
 
-            tableModel = new DefaultTableModel(data, columnNames) {
+            myTableModel = new DefaultTableModel(data, columnNames) {
                 @Override
-                public boolean isCellEditable(int row, int column) {
+                public boolean isCellEditable(int theRow, int theColumn) {
                     return false;
                 }
             };
-            campaignTable.setModel(tableModel);
+            myCampaignTable.setModel(myTableModel);
 
-            mainView.showSuccessMessage("Loaded " + campaigns.size() + " campaigns");
+            myMainView.showSuccessMessage("Loaded " + campaigns.size() + " campaigns");
 
         } catch (Exception e) {
-            mainView.showErrorMessage("Failed to load campaigns: " + e.getMessage());
+            myMainView.showErrorMessage("Failed to load campaigns: " + e.getMessage());
         }
     }
 
+    /**
+     * Displays detailed information for the selected campaign.
+     */
     private void viewCampaignDetails() {
-        int selectedRow = campaignTable.getSelectedRow();
+        int selectedRow = myCampaignTable.getSelectedRow();
         if (selectedRow == -1) {
-            mainView.showWarningMessage("Please select a campaign to view details");
+            myMainView.showWarningMessage("Please select a campaign to view details");
             return;
         }
 
         try {
-            String campaignName = (String) campaignTable.getValueAt(selectedRow, 0);
-            String synopsis = (String) campaignTable.getValueAt(selectedRow, 2);
+            String campaignName = (String) myCampaignTable.getValueAt(selectedRow, 0);
 
-            // Get full synopsis from the data source
-            List<Campaign> campaigns = controller.getAllCampaigns();
-            String fullSynopsis = "";
+            List<Campaign> campaigns = myController.getAllCampaigns();
             Campaign selectedCampaign = null;
 
             for (Campaign campaign : campaigns) {
                 if (campaign.getGameId().equals(campaignName)) {
-                    fullSynopsis = campaign.getSynopsis();
                     selectedCampaign = campaign;
                     break;
                 }
             }
 
             if (selectedCampaign == null) {
-                mainView.showErrorMessage("Could not find campaign details");
+                myMainView.showErrorMessage("Could not find campaign details");
                 return;
             }
 
-            // Create detailed campaign info
             StringBuilder details = new StringBuilder();
             details.append("CAMPAIGN: ").append(selectedCampaign.getGameId()).append("\n");
             details.append("=".repeat(50)).append("\n\n");
@@ -194,7 +216,7 @@ public class CampaignView extends JPanel {
             details.append("Max Players: ").append(selectedCampaign.getMaxPlayers()).append("\n\n");
             details.append("Synopsis:\n");
             details.append("-".repeat(20)).append("\n");
-            details.append(fullSynopsis);
+            details.append(selectedCampaign.getSynopsis());
 
             JTextArea textArea = new JTextArea(details.toString());
             textArea.setWrapStyleWord(true);
@@ -208,10 +230,10 @@ public class CampaignView extends JPanel {
             JOptionPane.showMessageDialog(this, scrollPane,
                     "Campaign Details: " + campaignName, JOptionPane.INFORMATION_MESSAGE);
 
-            mainView.showInfoMessage("Viewing details for campaign '" + campaignName + "'");
+            myMainView.showInfoMessage("Viewing details for campaign '" + campaignName + "'");
 
         } catch (Exception e) {
-            mainView.showErrorMessage("Error loading campaign details: " + e.getMessage());
+            myMainView.showErrorMessage("Error loading campaign details: " + e.getMessage());
         }
     }
 }

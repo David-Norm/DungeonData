@@ -1,133 +1,149 @@
+/**
+ * Class and Species reference view for displaying D&D classes and species information.
+ * Provides detailed information about classes, subclasses, species, and subspecies
+ * in a four-panel layout with interactive filtering and description viewing.
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 import java.util.Vector;
 
-/**
- *
- *
- * @author David Norman
- * @version Summer 2025
- */
 public class ClassSpeciesView extends JPanel {
-    private DnDController controller;
-    private JTable classTable;
-    private JTable subclassTable;
-    private JTable speciesTable;
-    private JTable subspeciesTable;
+    private DnDController myController;
+    private JTable myClassTable;
+    private JTable mySubclassTable;
+    private JTable mySpeciesTable;
+    private JTable mySubspeciesTable;
 
-    public ClassSpeciesView(DnDController controller) {
-        this.controller = controller;
+    /**
+     * Constructs a ClassSpeciesView with the specified controller.
+     * Initializes all components, sets up the layout, and loads initial data.
+     *
+     * @param theController the application controller for data operations
+     */
+    public ClassSpeciesView(DnDController theController) {
+        myController = theController;
         initializeComponents();
         setupLayout();
         refreshData();
     }
 
+    /**
+     * Initializes all GUI components including tables and event listeners.
+     * Sets up single selection mode for all tables and adds mouse and selection listeners.
+     */
     private void initializeComponents() {
-        classTable = new JTable();
-        subclassTable = new JTable();
-        speciesTable = new JTable();
-        subspeciesTable = new JTable();
+        myClassTable = new JTable();
+        mySubclassTable = new JTable();
+        mySpeciesTable = new JTable();
+        mySubspeciesTable = new JTable();
 
-        // Set selection modes
-        classTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        subclassTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        speciesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        subspeciesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        // Set selection modes for all tables
+        myClassTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        mySubclassTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        mySpeciesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        mySubspeciesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         // Add double-click listeners for description columns
-        classTable.addMouseListener(new java.awt.event.MouseAdapter() {
+        myClassTable.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    handleClassTableDoubleClick(e);
+            public void mouseClicked(java.awt.event.MouseEvent theEvent) {
+                if (theEvent.getClickCount() == 2) {
+                    handleClassTableDoubleClick(theEvent);
                 }
             }
         });
 
-        speciesTable.addMouseListener(new java.awt.event.MouseAdapter() {
+        mySpeciesTable.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    handleSpeciesTableDoubleClick(e);
+            public void mouseClicked(java.awt.event.MouseEvent theEvent) {
+                if (theEvent.getClickCount() == 2) {
+                    handleSpeciesTableDoubleClick(theEvent);
                 }
             }
         });
 
         // Add selection listeners to show related data
-        classTable.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
+        myClassTable.getSelectionModel().addListSelectionListener(theEvent -> {
+            if (!theEvent.getValueIsAdjusting()) {
                 showSubclassesForSelectedClass();
             }
         });
 
-        speciesTable.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
+        mySpeciesTable.getSelectionModel().addListSelectionListener(theEvent -> {
+            if (!theEvent.getValueIsAdjusting()) {
                 showSubspeciesForSelectedSpecies();
             }
         });
     }
 
+    /**
+     * Sets up the panel layout with four tables in a 2x2 grid.
+     * Creates panels for classes, subclasses, species, and subspecies with associated buttons.
+     */
     private void setupLayout() {
         setLayout(new GridLayout(2, 2, 10, 10));
 
-        // Classes panel
+        // Classes panel (top-left)
         JPanel classPanel = new JPanel(new BorderLayout());
-        JScrollPane classScrollPane = new JScrollPane(classTable);
+        JScrollPane classScrollPane = new JScrollPane(myClassTable);
         classScrollPane.setBorder(BorderFactory.createTitledBorder("D&D Classes - Double-click Description for full text"));
         classScrollPane.setPreferredSize(new Dimension(400, 300));
 
         JPanel classButtonPanel = new JPanel(new FlowLayout());
         JButton refreshClassesBtn = new JButton("Refresh Classes");
-        refreshClassesBtn.addActionListener(e -> loadClasses());
+        refreshClassesBtn.addActionListener(theEvent -> loadClasses());
         classButtonPanel.add(refreshClassesBtn);
 
         classPanel.add(classScrollPane, BorderLayout.CENTER);
         classPanel.add(classButtonPanel, BorderLayout.SOUTH);
 
-        // Subclasses panel
+        // Subclasses panel (top-right)
         JPanel subclassPanel = new JPanel(new BorderLayout());
-        JScrollPane subclassScrollPane = new JScrollPane(subclassTable);
+        JScrollPane subclassScrollPane = new JScrollPane(mySubclassTable);
         subclassScrollPane.setBorder(BorderFactory.createTitledBorder("Subclasses"));
         subclassScrollPane.setPreferredSize(new Dimension(400, 300));
 
         JPanel subclassButtonPanel = new JPanel(new FlowLayout());
         JButton showAllSubclassesBtn = new JButton("Show All Subclasses");
         JButton clearSubclassFilterBtn = new JButton("Clear Filter");
-        showAllSubclassesBtn.addActionListener(e -> loadAllSubclasses());
-        clearSubclassFilterBtn.addActionListener(e -> clearSubclassTable());
+        showAllSubclassesBtn.addActionListener(theEvent -> loadAllSubclasses());
+        clearSubclassFilterBtn.addActionListener(theEvent -> clearSubclassTable());
         subclassButtonPanel.add(showAllSubclassesBtn);
         subclassButtonPanel.add(clearSubclassFilterBtn);
 
         subclassPanel.add(subclassScrollPane, BorderLayout.CENTER);
         subclassPanel.add(subclassButtonPanel, BorderLayout.SOUTH);
 
-        // Species panel
+        // Species panel (bottom-left)
         JPanel speciesPanel = new JPanel(new BorderLayout());
-        JScrollPane speciesScrollPane = new JScrollPane(speciesTable);
+        JScrollPane speciesScrollPane = new JScrollPane(mySpeciesTable);
         speciesScrollPane.setBorder(BorderFactory.createTitledBorder("D&D Species - Double-click Description for full text"));
         speciesScrollPane.setPreferredSize(new Dimension(400, 300));
 
         JPanel speciesButtonPanel = new JPanel(new FlowLayout());
         JButton refreshSpeciesBtn = new JButton("Refresh Species");
-        refreshSpeciesBtn.addActionListener(e -> loadSpecies());
+        refreshSpeciesBtn.addActionListener(theEvent -> loadSpecies());
         speciesButtonPanel.add(refreshSpeciesBtn);
 
         speciesPanel.add(speciesScrollPane, BorderLayout.CENTER);
         speciesPanel.add(speciesButtonPanel, BorderLayout.SOUTH);
 
-        // Subspecies panel
+        // Subspecies panel (bottom-right)
         JPanel subspeciesPanel = new JPanel(new BorderLayout());
-        JScrollPane subspeciesScrollPane = new JScrollPane(subspeciesTable);
+        JScrollPane subspeciesScrollPane = new JScrollPane(mySubspeciesTable);
         subspeciesScrollPane.setBorder(BorderFactory.createTitledBorder("Subspecies"));
         subspeciesScrollPane.setPreferredSize(new Dimension(400, 300));
 
         JPanel subspeciesButtonPanel = new JPanel(new FlowLayout());
         JButton showAllSubspeciesBtn = new JButton("Show All Subspecies");
         JButton clearSubspeciesFilterBtn = new JButton("Clear Filter");
-        showAllSubspeciesBtn.addActionListener(e -> loadAllSubspecies());
-        clearSubspeciesFilterBtn.addActionListener(e -> clearSubspeciesTable());
+        showAllSubspeciesBtn.addActionListener(theEvent -> loadAllSubspecies());
+        clearSubspeciesFilterBtn.addActionListener(theEvent -> clearSubspeciesTable());
         subspeciesButtonPanel.add(showAllSubspeciesBtn);
         subspeciesButtonPanel.add(clearSubspeciesFilterBtn);
 
@@ -141,6 +157,10 @@ public class ClassSpeciesView extends JPanel {
         add(subspeciesPanel);   // Bottom-right
     }
 
+    /**
+     * Refreshes all data in the view by reloading classes and species.
+     * Clears the subclass and subspecies tables to reset filters.
+     */
     public void refreshData() {
         loadClasses();
         loadSpecies();
@@ -148,9 +168,13 @@ public class ClassSpeciesView extends JPanel {
         clearSubspeciesTable();
     }
 
+    /**
+     * Loads class data from the database and populates the class table.
+     * Includes class ID, casting stat, primary/secondary stats, and description.
+     */
     private void loadClasses() {
         try {
-            List<DnDClass> classes = controller.getAllClasses();
+            List<DnDClass> classes = myController.getAllClasses();
             Vector<String> classColumnNames = new Vector<>();
             classColumnNames.add("Class");
             classColumnNames.add("Casting Stat");
@@ -173,12 +197,12 @@ public class ClassSpeciesView extends JPanel {
 
             DefaultTableModel classModel = new DefaultTableModel(classData, classColumnNames) {
                 @Override
-                public boolean isCellEditable(int row, int column) {
+                public boolean isCellEditable(int theRow, int theColumn) {
                     return false;
                 }
             };
-            classTable.setModel(classModel);
-            classTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+            myClassTable.setModel(classModel);
+            myClassTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading classes: " + e.getMessage(),
@@ -186,9 +210,13 @@ public class ClassSpeciesView extends JPanel {
         }
     }
 
+    /**
+     * Loads all subclasses from the database and populates the subclass table.
+     * Determines parent class for each subclass by checking class relationships.
+     */
     private void loadAllSubclasses() {
         try {
-            List<String> subclasses = controller.getSubclasses();
+            List<String> subclasses = myController.getSubclasses();
             Vector<String> subclassColumnNames = new Vector<>();
             subclassColumnNames.add("Subclass");
             subclassColumnNames.add("Parent Class");
@@ -196,13 +224,13 @@ public class ClassSpeciesView extends JPanel {
             Vector<Vector<Object>> subclassData = new Vector<>();
 
             // Get all classes to find parent class for each subclass
-            List<DnDClass> allClasses = controller.getAllClasses();
+            List<DnDClass> allClasses = myController.getAllClasses();
 
             for (String subclass : subclasses) {
                 // Find which class this subclass belongs to
                 String parentClass = "Unknown";
                 for (DnDClass dndClass : allClasses) {
-                    List<String> classSubclasses = controller.getSubclassesByClass(dndClass.getClassId());
+                    List<String> classSubclasses = myController.getSubclassesByClass(dndClass.getClassId());
                     if (classSubclasses.contains(subclass)) {
                         parentClass = dndClass.getClassId();
                         break;
@@ -217,12 +245,12 @@ public class ClassSpeciesView extends JPanel {
 
             DefaultTableModel subclassModel = new DefaultTableModel(subclassData, subclassColumnNames) {
                 @Override
-                public boolean isCellEditable(int row, int column) {
+                public boolean isCellEditable(int theRow, int theColumn) {
                     return false;
                 }
             };
-            subclassTable.setModel(subclassModel);
-            subclassTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+            mySubclassTable.setModel(subclassModel);
+            mySubclassTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading subclasses: " + e.getMessage(),
@@ -230,16 +258,20 @@ public class ClassSpeciesView extends JPanel {
         }
     }
 
+    /**
+     * Shows subclasses for the currently selected class.
+     * Filters the subclass table to show only subclasses of the selected class.
+     */
     private void showSubclassesForSelectedClass() {
-        int selectedRow = classTable.getSelectedRow();
+        int selectedRow = myClassTable.getSelectedRow();
         if (selectedRow == -1) {
             clearSubclassTable();
             return;
         }
 
         try {
-            String selectedClassName = (String) classTable.getValueAt(selectedRow, 0);
-            List<String> subclasses = controller.getSubclassesByClass(selectedClassName);
+            String selectedClassName = (String) myClassTable.getValueAt(selectedRow, 0);
+            List<String> subclasses = myController.getSubclassesByClass(selectedClassName);
 
             Vector<String> subclassColumnNames = new Vector<>();
             subclassColumnNames.add("Subclass");
@@ -255,15 +287,15 @@ public class ClassSpeciesView extends JPanel {
 
             DefaultTableModel subclassModel = new DefaultTableModel(subclassData, subclassColumnNames) {
                 @Override
-                public boolean isCellEditable(int row, int column) {
+                public boolean isCellEditable(int theRow, int theColumn) {
                     return false;
                 }
             };
-            subclassTable.setModel(subclassModel);
-            subclassTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+            mySubclassTable.setModel(subclassModel);
+            mySubclassTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
             // Update border title to show filter
-            ((JScrollPane)subspeciesTable.getParent().getParent()).setBorder(
+            ((JScrollPane)mySubspeciesTable.getParent().getParent()).setBorder(
                     BorderFactory.createTitledBorder("Subclasses for " + selectedClassName)
             );
 
@@ -273,9 +305,13 @@ public class ClassSpeciesView extends JPanel {
         }
     }
 
+    /**
+     * Loads species data from the database and populates the species table.
+     * Includes species ID, size category, and description summary.
+     */
     private void loadSpecies() {
         try {
-            List<Species> species = controller.getAllSpecies();
+            List<Species> species = myController.getAllSpecies();
             Vector<String> speciesColumnNames = new Vector<>();
             speciesColumnNames.add("Species");
             speciesColumnNames.add("Size");
@@ -294,12 +330,12 @@ public class ClassSpeciesView extends JPanel {
 
             DefaultTableModel speciesModel = new DefaultTableModel(speciesData, speciesColumnNames) {
                 @Override
-                public boolean isCellEditable(int row, int column) {
+                public boolean isCellEditable(int theRow, int theColumn) {
                     return false;
                 }
             };
-            speciesTable.setModel(speciesModel);
-            speciesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+            mySpeciesTable.setModel(speciesModel);
+            mySpeciesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading species: " + e.getMessage(),
@@ -307,9 +343,13 @@ public class ClassSpeciesView extends JPanel {
         }
     }
 
+    /**
+     * Loads all subspecies from the database and populates the subspecies table.
+     * Determines parent species for each subspecies by checking species relationships.
+     */
     private void loadAllSubspecies() {
         try {
-            List<String> subspecies = controller.getSubspecies();
+            List<String> subspecies = myController.getSubspecies();
             Vector<String> subspeciesColumnNames = new Vector<>();
             subspeciesColumnNames.add("Subspecies");
             subspeciesColumnNames.add("Parent Species");
@@ -317,13 +357,13 @@ public class ClassSpeciesView extends JPanel {
             Vector<Vector<Object>> subspeciesData = new Vector<>();
 
             // Get all species to find parent species for each subspecies
-            List<Species> allSpecies = controller.getAllSpecies();
+            List<Species> allSpecies = myController.getAllSpecies();
 
             for (String subspecies_name : subspecies) {
                 // Find which species this subspecies belongs to
                 String parentSpecies = "Unknown";
                 for (Species species : allSpecies) {
-                    List<String> speciesSubspecies = controller.getSubspeciesBySpecies(species.getSpeciesId());
+                    List<String> speciesSubspecies = myController.getSubspeciesBySpecies(species.getSpeciesId());
                     if (speciesSubspecies.contains(subspecies_name)) {
                         parentSpecies = species.getSpeciesId();
                         break;
@@ -338,12 +378,12 @@ public class ClassSpeciesView extends JPanel {
 
             DefaultTableModel subspeciesModel = new DefaultTableModel(subspeciesData, subspeciesColumnNames) {
                 @Override
-                public boolean isCellEditable(int row, int column) {
+                public boolean isCellEditable(int theRow, int theColumn) {
                     return false;
                 }
             };
-            subspeciesTable.setModel(subspeciesModel);
-            subspeciesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+            mySubspeciesTable.setModel(subspeciesModel);
+            mySubspeciesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading subspecies: " + e.getMessage(),
@@ -351,16 +391,20 @@ public class ClassSpeciesView extends JPanel {
         }
     }
 
+    /**
+     * Shows subspecies for the currently selected species.
+     * Filters the subspecies table to show only subspecies of the selected species.
+     */
     private void showSubspeciesForSelectedSpecies() {
-        int selectedRow = speciesTable.getSelectedRow();
+        int selectedRow = mySpeciesTable.getSelectedRow();
         if (selectedRow == -1) {
             clearSubspeciesTable();
             return;
         }
 
         try {
-            String selectedSpeciesName = (String) speciesTable.getValueAt(selectedRow, 0);
-            List<String> subspecies = controller.getSubspeciesBySpecies(selectedSpeciesName);
+            String selectedSpeciesName = (String) mySpeciesTable.getValueAt(selectedRow, 0);
+            List<String> subspecies = myController.getSubspeciesBySpecies(selectedSpeciesName);
 
             Vector<String> subspeciesColumnNames = new Vector<>();
             subspeciesColumnNames.add("Subspecies");
@@ -376,15 +420,15 @@ public class ClassSpeciesView extends JPanel {
 
             DefaultTableModel subspeciesModel = new DefaultTableModel(subspeciesData, subspeciesColumnNames) {
                 @Override
-                public boolean isCellEditable(int row, int column) {
+                public boolean isCellEditable(int theRow, int theColumn) {
                     return false;
                 }
             };
-            subspeciesTable.setModel(subspeciesModel);
-            subspeciesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+            mySubspeciesTable.setModel(subspeciesModel);
+            mySubspeciesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
             // Update border title to show filter
-            ((JScrollPane)subspeciesTable.getParent().getParent()).setBorder(
+            ((JScrollPane)mySubspeciesTable.getParent().getParent()).setBorder(
                     BorderFactory.createTitledBorder("Subspecies for " + selectedSpeciesName)
             );
 
@@ -394,44 +438,58 @@ public class ClassSpeciesView extends JPanel {
         }
     }
 
+    /**
+     * Clears the subclass table and resets its column headers.
+     * Resets the border title to the default "Subclasses".
+     */
     private void clearSubclassTable() {
         DefaultTableModel emptyModel = new DefaultTableModel();
         emptyModel.addColumn("Subclass");
         emptyModel.addColumn("Parent Class");
-        subclassTable.setModel(emptyModel);
+        mySubclassTable.setModel(emptyModel);
 
         // Reset border title
-        ((JScrollPane)subclassTable.getParent().getParent()).setBorder(
+        ((JScrollPane)mySubclassTable.getParent().getParent()).setBorder(
                 BorderFactory.createTitledBorder("Subclasses")
         );
     }
 
+    /**
+     * Clears the subspecies table and resets its column headers.
+     * Resets the border title to the default "Subspecies".
+     */
     private void clearSubspeciesTable() {
         DefaultTableModel emptyModel = new DefaultTableModel();
         emptyModel.addColumn("Subspecies");
         emptyModel.addColumn("Parent Species");
-        subspeciesTable.setModel(emptyModel);
+        mySubspeciesTable.setModel(emptyModel);
 
         // Reset border title
-        ((JScrollPane)subspeciesTable.getParent().getParent()).setBorder(
+        ((JScrollPane)mySubspeciesTable.getParent().getParent()).setBorder(
                 BorderFactory.createTitledBorder("Subspecies")
         );
     }
 
-    private void handleClassTableDoubleClick(java.awt.event.MouseEvent e) {
-        int row = classTable.rowAtPoint(e.getPoint());
-        int col = classTable.columnAtPoint(e.getPoint());
+    /**
+     * Handles double-click events on the class table.
+     * Shows full class description in a popup dialog when description column is double-clicked.
+     *
+     * @param theEvent the mouse event containing click information
+     */
+    private void handleClassTableDoubleClick(java.awt.event.MouseEvent theEvent) {
+        int row = myClassTable.rowAtPoint(theEvent.getPoint());
+        int col = myClassTable.columnAtPoint(theEvent.getPoint());
 
         if (row >= 0 && col >= 0) {
-            String columnName = classTable.getColumnName(col);
+            String columnName = myClassTable.getColumnName(col);
 
-            // Check if it's the Description column (index 4)
+            // Check if it's the Description column
             if (columnName.equals("Description")) {
                 try {
-                    String className = (String) classTable.getValueAt(row, 0);
+                    String className = (String) myClassTable.getValueAt(row, 0);
 
                     // Get the full description from the controller
-                    List<DnDClass> classes = controller.getAllClasses();
+                    List<DnDClass> classes = myController.getAllClasses();
                     String fullDescription = "";
 
                     for (DnDClass dndClass : classes) {
@@ -456,20 +514,26 @@ public class ClassSpeciesView extends JPanel {
         }
     }
 
-    private void handleSpeciesTableDoubleClick(java.awt.event.MouseEvent e) {
-        int row = speciesTable.rowAtPoint(e.getPoint());
-        int col = speciesTable.columnAtPoint(e.getPoint());
+    /**
+     * Handles double-click events on the species table.
+     * Shows full species description in a popup dialog when description column is double-clicked.
+     *
+     * @param theEvent the mouse event containing click information
+     */
+    private void handleSpeciesTableDoubleClick(java.awt.event.MouseEvent theEvent) {
+        int row = mySpeciesTable.rowAtPoint(theEvent.getPoint());
+        int col = mySpeciesTable.columnAtPoint(theEvent.getPoint());
 
         if (row >= 0 && col >= 0) {
-            String columnName = speciesTable.getColumnName(col);
+            String columnName = mySpeciesTable.getColumnName(col);
 
-            // Check if it's the Description column (index 2)
+            // Check if it's the Description column
             if (columnName.equals("Description")) {
                 try {
-                    String speciesName = (String) speciesTable.getValueAt(row, 0);
+                    String speciesName = (String) mySpeciesTable.getValueAt(row, 0);
 
                     // Get the full description from the controller
-                    List<Species> speciesList = controller.getAllSpecies();
+                    List<Species> speciesList = myController.getAllSpecies();
                     String fullDescription = "";
 
                     for (Species species : speciesList) {
@@ -494,8 +558,15 @@ public class ClassSpeciesView extends JPanel {
         }
     }
 
-    private void showTextPopup(String title, String text) {
-        JTextArea textArea = new JTextArea(text);
+    /**
+     * Shows a text popup dialog with scrollable content.
+     * Creates a formatted dialog with word wrapping and scroll bars for long text.
+     *
+     * @param theTitle the dialog title
+     * @param theText the text content to display
+     */
+    private void showTextPopup(String theTitle, String theText) {
+        JTextArea textArea = new JTextArea(theText);
         textArea.setWrapStyleWord(true);
         textArea.setLineWrap(true);
         textArea.setEditable(false);
@@ -509,6 +580,6 @@ public class ClassSpeciesView extends JPanel {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        JOptionPane.showMessageDialog(this, scrollPane, title, JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, scrollPane, theTitle, JOptionPane.INFORMATION_MESSAGE);
     }
 }

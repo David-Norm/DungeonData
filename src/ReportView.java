@@ -1,3 +1,10 @@
+/**
+ * Report generation view for displaying various database reports.
+ * Provides buttons to generate different types of analytical reports.
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -5,41 +12,45 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.List;
 
-/**
- *
- *
- * @author David Norman
- * @version Summer 2025
- */
 public class ReportView extends JPanel {
-    private DnDController controller;
-    private DnDMainView mainView;
-    private JTable resultsTable;
-    private DefaultTableModel tableModel;
-    private JLabel reportTitleLabel;
+    private DnDController myController;
+    private DnDMainView myMainView;
+    private JTable myResultsTable;
+    private DefaultTableModel myTableModel;
+    private JLabel myReportTitleLabel;
 
-    public ReportView(DnDController controller, DnDMainView mainView) {
-        this.controller = controller;
-        this.mainView = mainView;
+    /**
+     * Constructs a ReportView with the specified controller and main view.
+     *
+     * @param theController the application controller
+     * @param theMainView the main application view
+     */
+    public ReportView(DnDController theController, DnDMainView theMainView) {
+        myController = theController;
+        myMainView = theMainView;
         initializeComponents();
         setupLayout();
     }
 
+    /**
+     * Initializes GUI components.
+     */
     private void initializeComponents() {
-        resultsTable = new JTable();
-        resultsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        reportTitleLabel = new JLabel("Select a report to run", JLabel.CENTER);
-        reportTitleLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+        myResultsTable = new JTable();
+        myResultsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        myReportTitleLabel = new JLabel("Select a report to run", JLabel.CENTER);
+        myReportTitleLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
     }
 
+    /**
+     * Sets up the panel layout and components.
+     */
     private void setupLayout() {
         setLayout(new BorderLayout());
 
-        // Report buttons panel - adjusted for 10 reports in 2 columns
         JPanel buttonPanel = new JPanel(new GridLayout(0, 2, 10, 10));
         buttonPanel.setBorder(BorderFactory.createTitledBorder("Available Reports"));
 
-        // Create report buttons - only the ones from provided SQL queries
         JButton[] reportButtons = {
                 new JButton("Characters by Class & Campaign"),
                 new JButton("Classes with Most Subclasses"),
@@ -53,164 +64,195 @@ public class ReportView extends JPanel {
                 new JButton("Character Ability Modifiers")
         };
 
-        // Add action listeners - only for the 10 SQL queries provided
-        reportButtons[0].addActionListener(e -> runCharactersByClassReport());           // Query 1
-        reportButtons[1].addActionListener(e -> runClassesWithMostSubclassesReport());   // Query 2
-        reportButtons[2].addActionListener(e -> runAboveAverageLevelReport());           // Query 3
-        reportButtons[3].addActionListener(e -> runAllPlayersAndCharactersReport());     // Query 4
-        reportButtons[4].addActionListener(e -> runPopularSettingsAndMilitaryReport()); // Query 5
-        reportButtons[5].addActionListener(e -> runCharacterSpeciesAndSizeReport());    // Query 6
-        reportButtons[6].addActionListener(e -> runPlayerCharacterCountsReport());      // Query 7
-        reportButtons[7].addActionListener(e -> runCampaignParticipationReport());      // Query 8
-        reportButtons[8].addActionListener(e -> runClassDistributionReport());          // Query 9
-        reportButtons[9].addActionListener(e -> runAbilityModifiersReport());           // Query 10
+        reportButtons[0].addActionListener(e -> runCharactersByClassReport());
+        reportButtons[1].addActionListener(e -> runClassesWithMostSubclassesReport());
+        reportButtons[2].addActionListener(e -> runAboveAverageLevelReport());
+        reportButtons[3].addActionListener(e -> runAllPlayersAndCharactersReport());
+        reportButtons[4].addActionListener(e -> runPopularSettingsAndMilitaryReport());
+        reportButtons[5].addActionListener(e -> runCharacterSpeciesAndSizeReport());
+        reportButtons[6].addActionListener(e -> runPlayerCharacterCountsReport());
+        reportButtons[7].addActionListener(e -> runCampaignParticipationReport());
+        reportButtons[8].addActionListener(e -> runClassDistributionReport());
+        reportButtons[9].addActionListener(e -> runAbilityModifiersReport());
 
         for (JButton button : reportButtons) {
             buttonPanel.add(button);
         }
 
-        // Results panel
         JPanel resultsPanel = new JPanel(new BorderLayout());
-        resultsPanel.add(reportTitleLabel, BorderLayout.NORTH);
+        resultsPanel.add(myReportTitleLabel, BorderLayout.NORTH);
 
-        JScrollPane scrollPane = new JScrollPane(resultsTable);
+        JScrollPane scrollPane = new JScrollPane(myResultsTable);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Report Results"));
         resultsPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Layout
         add(buttonPanel, BorderLayout.NORTH);
         add(resultsPanel, BorderLayout.CENTER);
     }
 
+    /**
+     * Refreshes the report view by clearing current results.
+     */
     public void refreshData() {
-        // Clear current results
-        if (tableModel != null) {
-            tableModel.setRowCount(0);
+        if (myTableModel != null) {
+            myTableModel.setRowCount(0);
         }
-        reportTitleLabel.setText("Select a report to run");
-        mainView.showInfoMessage("Reports cleared - select a report to run");
+        myReportTitleLabel.setText("Select a report to run");
+        myMainView.showInfoMessage("Reports cleared - select a report to run");
     }
 
-    // Only the 10 reports from the provided SQL queries
-
+    /**
+     * Generates and displays the characters by class and campaign report.
+     */
     private void runCharactersByClassReport() {
         try {
-            mainView.showInfoMessage("Generating Characters by Class & Campaign report...");
-            List<Map<String, Object>> results = controller.getCharactersByClassAndCampaign();
+            myMainView.showInfoMessage("Generating Characters by Class & Campaign report...");
+            List<Map<String, Object>> results = myController.getCharactersByClassAndCampaign();
             displayResults(results, "Characters by Class & Campaign");
         } catch (Exception e) {
-            mainView.showErrorMessage("Failed to generate Characters by Class report: " + e.getMessage());
+            myMainView.showErrorMessage("Failed to generate Characters by Class report: " + e.getMessage());
         }
     }
 
+    /**
+     * Generates and displays the classes with most subclasses report.
+     */
     private void runClassesWithMostSubclassesReport() {
         try {
-            mainView.showInfoMessage("Generating Classes with Most Subclasses report...");
-            List<Map<String, Object>> results = controller.getClassesWithMostSubclasses();
+            myMainView.showInfoMessage("Generating Classes with Most Subclasses report...");
+            List<Map<String, Object>> results = myController.getClassesWithMostSubclasses();
             displayResults(results, "Classes with Most Subclasses");
         } catch (Exception e) {
-            mainView.showErrorMessage("Failed to generate Classes with Most Subclasses report: " + e.getMessage());
+            myMainView.showErrorMessage("Failed to generate Classes with Most Subclasses report: " + e.getMessage());
         }
     }
 
+    /**
+     * Generates and displays the above average level by species report.
+     */
     private void runAboveAverageLevelReport() {
         try {
-            mainView.showInfoMessage("Generating Above Average Level by Species report...");
-            List<Map<String, Object>> results = controller.getAboveAverageLevelBySpecies();
+            myMainView.showInfoMessage("Generating Above Average Level by Species report...");
+            List<Map<String, Object>> results = myController.getAboveAverageLevelBySpecies();
             displayResults(results, "Characters Above Average Level by Species");
         } catch (Exception e) {
-            mainView.showErrorMessage("Failed to generate Above Average Level report: " + e.getMessage());
+            myMainView.showErrorMessage("Failed to generate Above Average Level report: " + e.getMessage());
         }
     }
 
+    /**
+     * Generates and displays the all players and characters report.
+     */
     private void runAllPlayersAndCharactersReport() {
         try {
-            mainView.showInfoMessage("Generating All Players and Characters report...");
-            List<Map<String, Object>> results = controller.getAllPlayersAndCharacters();
+            myMainView.showInfoMessage("Generating All Players and Characters report...");
+            List<Map<String, Object>> results = myController.getAllPlayersAndCharacters();
             displayResults(results, "All Players and Characters");
         } catch (Exception e) {
-            mainView.showErrorMessage("Failed to generate All Players and Characters report: " + e.getMessage());
+            myMainView.showErrorMessage("Failed to generate All Players and Characters report: " + e.getMessage());
         }
     }
 
+    /**
+     * Generates and displays the popular settings and military report.
+     */
     private void runPopularSettingsAndMilitaryReport() {
         try {
-            mainView.showInfoMessage("Generating Popular Settings & Military Background report...");
-            List<Map<String, Object>> results = controller.getPopularSettingsAndMilitary();
+            myMainView.showInfoMessage("Generating Popular Settings & Military Background report...");
+            List<Map<String, Object>> results = myController.getPopularSettingsAndMilitary();
             displayResults(results, "Popular Settings & Military Background");
         } catch (Exception e) {
-            mainView.showErrorMessage("Failed to generate Popular Settings & Military report: " + e.getMessage());
+            myMainView.showErrorMessage("Failed to generate Popular Settings & Military report: " + e.getMessage());
         }
     }
 
+    /**
+     * Generates and displays the character species and size report.
+     */
     private void runCharacterSpeciesAndSizeReport() {
         try {
-            mainView.showInfoMessage("Generating Character Species & Size report...");
-            List<Map<String, Object>> results = controller.getCharacterSpeciesAndSize();
+            myMainView.showInfoMessage("Generating Character Species & Size report...");
+            List<Map<String, Object>> results = myController.getCharacterSpeciesAndSize();
             displayResults(results, "Character Species & Size");
         } catch (Exception e) {
-            mainView.showErrorMessage("Failed to generate Character Species & Size report: " + e.getMessage());
+            myMainView.showErrorMessage("Failed to generate Character Species & Size report: " + e.getMessage());
         }
     }
 
+    /**
+     * Generates and displays the player character counts report.
+     */
     private void runPlayerCharacterCountsReport() {
         try {
-            mainView.showInfoMessage("Generating Player Character Counts report...");
-            List<Map<String, Object>> results = controller.getPlayerCharacterCounts();
+            myMainView.showInfoMessage("Generating Player Character Counts report...");
+            List<Map<String, Object>> results = myController.getPlayerCharacterCounts();
             displayResults(results, "Player Character Counts");
         } catch (Exception e) {
-            mainView.showErrorMessage("Failed to generate Player Character Counts report: " + e.getMessage());
+            myMainView.showErrorMessage("Failed to generate Player Character Counts report: " + e.getMessage());
         }
     }
 
+    /**
+     * Generates and displays the campaign participation report.
+     */
     private void runCampaignParticipationReport() {
         try {
-            mainView.showInfoMessage("Generating Campaign Participation report...");
-            List<Map<String, Object>> results = controller.getCampaignParticipation();
+            myMainView.showInfoMessage("Generating Campaign Participation report...");
+            List<Map<String, Object>> results = myController.getCampaignParticipation();
             displayResults(results, "Campaign Participation Statistics");
         } catch (Exception e) {
-            mainView.showErrorMessage("Failed to generate Campaign Participation report: " + e.getMessage());
+            myMainView.showErrorMessage("Failed to generate Campaign Participation report: " + e.getMessage());
         }
     }
 
+    /**
+     * Generates and displays the class distribution report.
+     */
     private void runClassDistributionReport() {
         try {
-            mainView.showInfoMessage("Generating Class Distribution report...");
-            List<Map<String, Object>> results = controller.getClassDistribution();
+            myMainView.showInfoMessage("Generating Class Distribution report...");
+            List<Map<String, Object>> results = myController.getClassDistribution();
             displayResults(results, "Class Distribution Analysis");
         } catch (Exception e) {
-            mainView.showErrorMessage("Failed to generate Class Distribution report: " + e.getMessage());
+            myMainView.showErrorMessage("Failed to generate Class Distribution report: " + e.getMessage());
         }
     }
 
+    /**
+     * Generates and displays the character ability modifiers report.
+     */
     private void runAbilityModifiersReport() {
         try {
-            mainView.showInfoMessage("Generating Character Ability Modifiers report...");
-            List<Map<String, Object>> results = controller.getCharacterAbilityModifiers();
+            myMainView.showInfoMessage("Generating Character Ability Modifiers report...");
+            List<Map<String, Object>> results = myController.getCharacterAbilityModifiers();
             displayResults(results, "Character Ability Modifiers");
         } catch (Exception e) {
-            mainView.showErrorMessage("Failed to generate Ability Modifiers report: " + e.getMessage());
+            myMainView.showErrorMessage("Failed to generate Ability Modifiers report: " + e.getMessage());
         }
     }
 
-    private void displayResults(List<Map<String, Object>> results, String title) {
+    /**
+     * Displays the report results in the table.
+     *
+     * @param theResults the data to display
+     * @param theTitle the report title
+     */
+    private void displayResults(List<Map<String, Object>> theResults, String theTitle) {
         try {
-            reportTitleLabel.setText(title);
+            myReportTitleLabel.setText(theTitle);
 
-            if (results.isEmpty()) {
-                tableModel = new DefaultTableModel();
-                resultsTable.setModel(tableModel);
-                mainView.showWarningMessage("No results found for " + title);
+            if (theResults.isEmpty()) {
+                myTableModel = new DefaultTableModel();
+                myResultsTable.setModel(myTableModel);
+                myMainView.showWarningMessage("No results found for " + theTitle);
                 return;
             }
 
-            // Get column names from first result
-            Map<String, Object> firstResult = results.get(0);
+            Map<String, Object> firstResult = theResults.get(0);
             Vector<String> columnNames = new Vector<>(firstResult.keySet());
 
-            // Prepare data
             Vector<Vector<Object>> data = new Vector<>();
-            for (Map<String, Object> result : results) {
+            for (Map<String, Object> result : theResults) {
                 Vector<Object> row = new Vector<>();
                 for (String columnName : columnNames) {
                     row.add(result.get(columnName));
@@ -218,21 +260,19 @@ public class ReportView extends JPanel {
                 data.add(row);
             }
 
-            tableModel = new DefaultTableModel(data, columnNames) {
+            myTableModel = new DefaultTableModel(data, columnNames) {
                 @Override
-                public boolean isCellEditable(int row, int column) {
+                public boolean isCellEditable(int theRow, int theColumn) {
                     return false;
                 }
             };
-            resultsTable.setModel(tableModel);
+            myResultsTable.setModel(myTableModel);
+            myResultsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-            // Auto-resize columns
-            resultsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-
-            mainView.showSuccessMessage(title + " generated successfully - " + results.size() + " results found");
+            myMainView.showSuccessMessage(theTitle + " generated successfully - " + theResults.size() + " results found");
 
         } catch (Exception e) {
-            mainView.showErrorMessage("Error displaying report results: " + e.getMessage());
+            myMainView.showErrorMessage("Error displaying report results: " + e.getMessage());
         }
     }
 }

@@ -1,61 +1,75 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-
 /**
- *
+ * Character creation view for creating new D&D characters.
+ * Provides form fields for all character attributes including ability scores,
+ * class selection, species selection, and campaign assignment.
  *
  * @author David Norman
  * @version Summer 2025
  */
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+
 public class CharacterCreatorView extends JPanel {
-    private DnDController controller;
-    private DnDMainView mainView;
+    private DnDController myController;
+    private DnDMainView myMainView;
 
-    // Form components
-    private JTextField nameField;
-    private JSpinner levelSpinner;
-    private JComboBox<String> classCombo;
-    private JComboBox<String> subclassCombo;
-    private JComboBox<String> speciesCombo;
-    private JComboBox<String> subspeciesCombo;
-    private JComboBox<String> backgroundCombo;
-    private JComboBox<Player> playerCombo;
-    private JComboBox<Campaign> campaignCombo;
-    private JSpinner[] abilitySpinners;
+    private JTextField myNameField;
+    private JSpinner myLevelSpinner;
+    private JComboBox<String> myClassCombo;
+    private JComboBox<String> mySubclassCombo;
+    private JComboBox<String> mySpeciesCombo;
+    private JComboBox<String> mySubspeciesCombo;
+    private JComboBox<String> myBackgroundCombo;
+    private JComboBox<Player> myPlayerCombo;
+    private JComboBox<Campaign> myCampaignCombo;
+    private JSpinner[] myAbilitySpinners;
 
-    public CharacterCreatorView(DnDController controller, DnDMainView mainView) {
-        this.controller = controller;
-        this.mainView = mainView;
+    /**
+     * Constructs a CharacterCreatorView with the specified myController and main view.
+     * Initializes all components, sets up the layout, and loads initial data.
+     *
+     * @param theController the application myController for data operations
+     * @param theMainView the main application view for status messages
+     */
+    public CharacterCreatorView(DnDController theController, DnDMainView theMainView) {
+        myController = theController;
+        myMainView = theMainView;
         initializeComponents();
         setupLayout();
         refreshData();
     }
 
+    /**
+     * Initializes all GUI components including text fields, spinners, and combo boxes.
+     * Sets up listeners for dynamic updates of subclasses and subspecies.
+     */
     private void initializeComponents() {
-        nameField = new JTextField(20);
-        levelSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 20, 1));
-        classCombo = new JComboBox<>();
-        subclassCombo = new JComboBox<>();
-        speciesCombo = new JComboBox<>();
-        subspeciesCombo = new JComboBox<>();
-        backgroundCombo = new JComboBox<>();
-        playerCombo = new JComboBox<>();
-        campaignCombo = new JComboBox<>();
+        myNameField = new JTextField(20);
+        myLevelSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 20, 1));
+        myClassCombo = new JComboBox<>();
+        mySubclassCombo = new JComboBox<>();
+        mySpeciesCombo = new JComboBox<>();
+        mySubspeciesCombo = new JComboBox<>();
+        myBackgroundCombo = new JComboBox<>();
+        myPlayerCombo = new JComboBox<>();
+        myCampaignCombo = new JComboBox<>();
 
         // Add listeners for class/species changes to update subclass/subspecies options
-        classCombo.addActionListener(e -> updateSubclasses());
-        speciesCombo.addActionListener(e -> updateSubspecies());
+        myClassCombo.addActionListener(e -> updateSubclasses());
+        mySpeciesCombo.addActionListener(e -> updateSubspecies());
 
-        // Initialize ability score spinners
-        abilitySpinners = new JSpinner[6];
+        // Initialize ability score spinners with default values
+        myAbilitySpinners = new JSpinner[6];
         for (int i = 0; i < 6; i++) {
-            abilitySpinners[i] = new JSpinner(new SpinnerNumberModel(10, 0, 30, 1));
+            myAbilitySpinners[i] = new JSpinner(new SpinnerNumberModel(10, 0, 30, 1));
         }
     }
 
+    /**
+     * Sets up the panel layout using GridBagLayout for form components.
+     * Creates sections for character details, ability scores, and action buttons.
+     */
     private void setupLayout() {
         setLayout(new BorderLayout());
 
@@ -68,55 +82,55 @@ public class CharacterCreatorView extends JPanel {
         gbc.gridx = 0; gbc.gridy = 0;
         mainPanel.add(new JLabel("Character Name:"), gbc);
         gbc.gridx = 1;
-        mainPanel.add(nameField, gbc);
+        mainPanel.add(myNameField, gbc);
 
         // Level
         gbc.gridx = 0; gbc.gridy = 1;
         mainPanel.add(new JLabel("Level:"), gbc);
         gbc.gridx = 1;
-        mainPanel.add(levelSpinner, gbc);
+        mainPanel.add(myLevelSpinner, gbc);
 
         // Class
         gbc.gridx = 0; gbc.gridy = 2;
         mainPanel.add(new JLabel("Class:"), gbc);
         gbc.gridx = 1;
-        mainPanel.add(classCombo, gbc);
+        mainPanel.add(myClassCombo, gbc);
 
         // Subclass
         gbc.gridx = 0; gbc.gridy = 3;
         mainPanel.add(new JLabel("Subclass:"), gbc);
         gbc.gridx = 1;
-        mainPanel.add(subclassCombo, gbc);
+        mainPanel.add(mySubclassCombo, gbc);
 
         // Species
         gbc.gridx = 0; gbc.gridy = 4;
         mainPanel.add(new JLabel("Species:"), gbc);
         gbc.gridx = 1;
-        mainPanel.add(speciesCombo, gbc);
+        mainPanel.add(mySpeciesCombo, gbc);
 
         // Subspecies
         gbc.gridx = 0; gbc.gridy = 5;
         mainPanel.add(new JLabel("Subspecies:"), gbc);
         gbc.gridx = 1;
-        mainPanel.add(subspeciesCombo, gbc);
+        mainPanel.add(mySubspeciesCombo, gbc);
 
         // Background
         gbc.gridx = 0; gbc.gridy = 6;
         mainPanel.add(new JLabel("Background:"), gbc);
         gbc.gridx = 1;
-        mainPanel.add(backgroundCombo, gbc);
+        mainPanel.add(myBackgroundCombo, gbc);
 
         // Player
         gbc.gridx = 0; gbc.gridy = 7;
         mainPanel.add(new JLabel("Player:"), gbc);
         gbc.gridx = 1;
-        mainPanel.add(playerCombo, gbc);
+        mainPanel.add(myPlayerCombo, gbc);
 
         // Campaign
         gbc.gridx = 0; gbc.gridy = 8;
         mainPanel.add(new JLabel("Campaign:"), gbc);
         gbc.gridx = 1;
-        mainPanel.add(campaignCombo, gbc);
+        mainPanel.add(myCampaignCombo, gbc);
 
         // Ability Scores Panel
         JPanel abilityPanel = createAbilityScorePanel();
@@ -144,109 +158,133 @@ public class CharacterCreatorView extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
         mainPanel.add(buttonPanel, gbc);
 
-        // Wrap in scroll pane
+        // Wrap in scroll pane for better usability
         JScrollPane scrollPane = new JScrollPane(mainPanel);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Create New Character"));
 
         add(scrollPane, BorderLayout.CENTER);
     }
 
+    /**
+     * Creates the ability score input panel with labels and spinners.
+     * Arranges the six D&D ability scores (STR, DEX, CON, INT, WIS, CHA) in a grid.
+     *
+     * @return the configured ability score panel
+     */
     private JPanel createAbilityScorePanel() {
         JPanel panel = new JPanel(new GridLayout(2, 6, 5, 5));
         panel.setBorder(BorderFactory.createTitledBorder("Ability Scores"));
 
         String[] abilities = {"STR", "DEX", "CON", "INT", "WIS", "CHA"};
 
-        // Add labels
+        // Add labels for each ability
         for (String ability : abilities) {
             panel.add(new JLabel(ability, JLabel.CENTER));
         }
 
-        // Add spinners
-        for (JSpinner spinner : abilitySpinners) {
+        // Add spinners for each ability score
+        for (JSpinner spinner : myAbilitySpinners) {
             panel.add(spinner);
         }
 
         return panel;
     }
 
+    /**
+     * Refreshes all form data by loading current information from the database.
+     * Updates combo boxes with classes, species, backgrounds, players, and campaigns.
+     * Also updates dependent dropdowns (subclasses and subspecies).
+     */
     public void refreshData() {
         try {
             // Load classes
-            classCombo.removeAllItems();
-            List<String> classes = controller.getClasses();
+            myClassCombo.removeAllItems();
+            List<String> classes = myController.getClasses();
             for (String dndClass : classes) {
-                classCombo.addItem(dndClass);
+                myClassCombo.addItem(dndClass);
             }
-            mainView.showInfoMessage("Loaded " + classes.size() + " classes");
+            myMainView.showInfoMessage("Loaded " + classes.size() + " classes");
 
             // Load species
-            speciesCombo.removeAllItems();
-            List<String> species = controller.getSpecies();
+            mySpeciesCombo.removeAllItems();
+            List<String> species = myController.getSpecies();
             for (String speciesName : species) {
-                speciesCombo.addItem(speciesName);
+                mySpeciesCombo.addItem(speciesName);
             }
 
             // Load backgrounds
-            backgroundCombo.removeAllItems();
-            List<String> backgrounds = controller.getBackgrounds();
+            myBackgroundCombo.removeAllItems();
+            List<String> backgrounds = myController.getBackgrounds();
             for (String background : backgrounds) {
-                backgroundCombo.addItem(background);
+                myBackgroundCombo.addItem(background);
             }
 
             // Load players
-            playerCombo.removeAllItems();
-            List<Player> players = controller.getAllPlayers();
+            myPlayerCombo.removeAllItems();
+            List<Player> players = myController.getAllPlayers();
             for (Player player : players) {
-                playerCombo.addItem(player);
+                myPlayerCombo.addItem(player);
             }
 
             // Load campaigns
-            campaignCombo.removeAllItems();
-            List<Campaign> campaigns = controller.getAllCampaigns();
+            myCampaignCombo.removeAllItems();
+            List<Campaign> campaigns = myController.getAllCampaigns();
             for (Campaign campaign : campaigns) {
-                campaignCombo.addItem(campaign);
+                myCampaignCombo.addItem(campaign);
             }
 
             // Update subclasses and subspecies for initially selected items
             updateSubclasses();
             updateSubspecies();
 
-            mainView.showSuccessMessage("Character creation form loaded with " + classes.size() + " classes, " +
+            myMainView.showSuccessMessage("Character creation form loaded with " + classes.size() + " classes, " +
                     species.size() + " species, " + players.size() + " players, and " +
                     campaigns.size() + " campaigns");
 
         } catch (Exception e) {
-            mainView.showErrorMessage("Failed to load character creation data: " + e.getMessage());
+            myMainView.showErrorMessage("Failed to load character creation data: " + e.getMessage());
         }
     }
 
+    /**
+     * Updates the subclass dropdown based on the currently selected class.
+     * Clears existing subclasses and loads those available for the selected class.
+     */
     private void updateSubclasses() {
-        subclassCombo.removeAllItems();
-        String selectedClass = (String) classCombo.getSelectedItem();
+        mySubclassCombo.removeAllItems();
+        String selectedClass = (String) myClassCombo.getSelectedItem();
         if (selectedClass != null) {
-            List<String> subclasses = controller.getSubclassesByClass(selectedClass);
+            List<String> subclasses = myController.getSubclassesByClass(selectedClass);
             for (String subclass : subclasses) {
-                subclassCombo.addItem(subclass);
+                mySubclassCombo.addItem(subclass);
             }
-            mainView.showInfoMessage("Loaded " + subclasses.size() + " subclasses for " + selectedClass);
+            myMainView.showInfoMessage("Loaded " + subclasses.size() + " subclasses for " + selectedClass);
         }
     }
 
+    /**
+     * Updates the subspecies dropdown based on the currently selected species.
+     * Clears existing subspecies and loads those available for the selected species.
+     */
     private void updateSubspecies() {
-        subspeciesCombo.removeAllItems();
-        String selectedSpecies = (String) speciesCombo.getSelectedItem();
+        mySubspeciesCombo.removeAllItems();
+        String selectedSpecies = (String) mySpeciesCombo.getSelectedItem();
         if (selectedSpecies != null) {
-            List<String> subspecies = controller.getSubspeciesBySpecies(selectedSpecies);
+            List<String> subspecies = myController.getSubspeciesBySpecies(selectedSpecies);
             for (String subspecie : subspecies) {
-                subspeciesCombo.addItem(subspecie);
+                mySubspeciesCombo.addItem(subspecie);
             }
-            mainView.showInfoMessage("Loaded " + subspecies.size() + " subspecies for " + selectedSpecies);
+            myMainView.showInfoMessage("Loaded " + subspecies.size() + " subspecies for " + selectedSpecies);
         }
     }
 
+    /**
+     * Generates random ability scores using the 4d6 drop lowest method.
+     * This is a common D&D character generation technique that rolls four six-sided dice
+     * and uses the sum of the three highest rolls for each ability score.
+     */
     private void rollRandomStats() {
-        for (JSpinner spinner : abilitySpinners) {
+        for (JSpinner spinner : myAbilitySpinners) {
             // Simulate 4d6 drop lowest (common D&D stat generation method)
             int[] rolls = new int[4];
             for (int i = 0; i < 4; i++) {
@@ -256,69 +294,78 @@ public class CharacterCreatorView extends JPanel {
             int total = rolls[1] + rolls[2] + rolls[3]; // Sum highest 3
             spinner.setValue(total);
         }
-        mainView.showSuccessMessage("Random ability scores generated using 4d6 drop lowest method");
+        myMainView.showSuccessMessage("Random ability scores generated using 4d6 drop lowest method");
     }
 
+    /**
+     * Creates a new character with the form data and saves it to the database.
+     * Validates required fields and displays appropriate success or error messages.
+     * Clears the form and switches to the Characters tab upon successful creation.
+     */
     private void createCharacter() {
         try {
-            String charName = nameField.getText().trim();
+            String charName = myNameField.getText().trim();
             if (charName.isEmpty()) {
-                mainView.showWarningMessage("Character name is required");
+                myMainView.showWarningMessage("Character name is required");
                 return;
             }
 
-            Player selectedPlayer = (Player) playerCombo.getSelectedItem();
-            Campaign selectedCampaign = (Campaign) campaignCombo.getSelectedItem();
+            Player selectedPlayer = (Player) myPlayerCombo.getSelectedItem();
+            Campaign selectedCampaign = (Campaign) myCampaignCombo.getSelectedItem();
 
             if (selectedPlayer == null) {
-                mainView.showWarningMessage("Please select a player");
+                myMainView.showWarningMessage("Please select a player");
                 return;
             }
 
             if (selectedCampaign == null) {
-                mainView.showWarningMessage("Please select a campaign");
+                myMainView.showWarningMessage("Please select a campaign");
                 return;
             }
 
             Character character = new Character(
                     charName,
-                    (Integer) levelSpinner.getValue(),
-                    (String) classCombo.getSelectedItem(),
-                    (String) subclassCombo.getSelectedItem(),
-                    (String) speciesCombo.getSelectedItem(),
-                    (String) subspeciesCombo.getSelectedItem(),
-                    (String) backgroundCombo.getSelectedItem(),
+                    (Integer) myLevelSpinner.getValue(),
+                    (String) myClassCombo.getSelectedItem(),
+                    (String) mySubclassCombo.getSelectedItem(),
+                    (String) mySpeciesCombo.getSelectedItem(),
+                    (String) mySubspeciesCombo.getSelectedItem(),
+                    (String) myBackgroundCombo.getSelectedItem(),
                     selectedPlayer.getPlayerId(),
                     selectedCampaign.getGameId(),
-                    (Integer) abilitySpinners[0].getValue(), // STR
-                    (Integer) abilitySpinners[1].getValue(), // DEX
-                    (Integer) abilitySpinners[2].getValue(), // CON
-                    (Integer) abilitySpinners[3].getValue(), // INT
-                    (Integer) abilitySpinners[4].getValue(), // WIS
-                    (Integer) abilitySpinners[5].getValue()  // CHA
+                    (Integer) myAbilitySpinners[0].getValue(), // STR
+                    (Integer) myAbilitySpinners[1].getValue(), // DEX
+                    (Integer) myAbilitySpinners[2].getValue(), // CON
+                    (Integer) myAbilitySpinners[3].getValue(), // INT
+                    (Integer) myAbilitySpinners[4].getValue(), // WIS
+                    (Integer) myAbilitySpinners[5].getValue()  // CHA
             );
 
-            if (controller.createCharacter(character)) {
-                mainView.showSuccessMessage("Character '" + charName + "' created successfully!");
+            if (myController.createCharacter(character)) {
+                myMainView.showSuccessMessage("Character '" + charName + "' created successfully!");
                 clearForm();
 
-                // Optionally switch to Characters tab to see the new character
-                mainView.switchToCharactersTab();
+                // Switch to Characters tab to show the new character
+                myMainView.switchToCharactersTab();
             } else {
-                mainView.showErrorMessage("Failed to create character '" + charName + "' - name may already exist");
+                myMainView.showErrorMessage("Failed to create character '" + charName + "' - name may already exist");
             }
 
         } catch (Exception e) {
-            mainView.showErrorMessage("Error creating character: " + e.getMessage());
+            myMainView.showErrorMessage("Error creating character: " + e.getMessage());
         }
     }
 
+    /**
+     * Clears all form fields and resets them to their default values.
+     * Resets character name, level to 1, and all ability scores to 10.
+     */
     private void clearForm() {
-        nameField.setText("");
-        levelSpinner.setValue(1);
-        for (JSpinner spinner : abilitySpinners) {
+        myNameField.setText("");
+        myLevelSpinner.setValue(1);
+        for (JSpinner spinner : myAbilitySpinners) {
             spinner.setValue(10);
         }
-        mainView.showInfoMessage("Form cleared - ready for new character");
+        myMainView.showInfoMessage("Form cleared - ready for new character");
     }
 }

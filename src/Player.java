@@ -1,55 +1,167 @@
 /**
- *
+ * Represents a player in the D&D system with contact information
+ * and preferences for communication and scheduling.
  *
  * @author David Norman
  * @version Summer 2025
  */
 public class Player {
-    private int playerId;
-    private String firstName;
-    private String lastName;
-    private String preferredContact;
-    private String contactInfo;
-    private String timeZone;
+    private int myPlayerId;
+    private String myFirstName;
+    private String myLastName;
+    private String myPreferredContact;
+    private String myContactInfo;
+    private String myTimeZone;
 
-    // Constructors
+    /**
+     * Default constructor for Player.
+     */
     public Player() {}
 
-    public Player(int playerId, String firstName, String lastName,
-                  String preferredContact, String contactInfo, String timeZone) {
-        this.playerId = playerId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.preferredContact = preferredContact;
-        this.contactInfo = contactInfo;
-        this.timeZone = timeZone;
+    /**
+     * Constructs a Player with all specified parameters.
+     *
+     * @param thePlayerId the unique player identifier
+     * @param theFirstName the player's first name
+     * @param theLastName the player's last name
+     * @param thePreferredContact the preferred contact method
+     * @param theContactInfo the contact information
+     * @param theTimeZone the player's time zone
+     */
+    public Player(int thePlayerId, String theFirstName, String theLastName,
+                  String thePreferredContact, String theContactInfo, String theTimeZone) {
+        myPlayerId = thePlayerId;
+        myFirstName = theFirstName;
+        myLastName = theLastName;
+        myPreferredContact = thePreferredContact;
+        myContactInfo = theContactInfo;
+        myTimeZone = theTimeZone;
     }
 
-    // Getters and Setters
-    public int getPlayerId() { return playerId; }
-    public void setPlayerId(int playerId) { this.playerId = playerId; }
+    /**
+     * Gets the unique player identifier.
+     *
+     * @return the player ID
+     */
+    public int getPlayerId() {
+        return myPlayerId;
+    }
 
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
+    /**
+     * Sets the unique player identifier.
+     *
+     * @param thePlayerId the new player ID to set
+     */
+    public void setPlayerId(int thePlayerId) {
+        myPlayerId = thePlayerId;
+    }
 
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
+    /**
+     * Gets the player's first name.
+     *
+     * @return the first name
+     */
+    public String getFirstName() {
+        return myFirstName;
+    }
 
-    public String getPreferredContact() { return preferredContact; }
-    public void setPreferredContact(String preferredContact) { this.preferredContact = preferredContact; }
+    /**
+     * Sets the player's first name.
+     *
+     * @param theFirstName the new first name to set
+     */
+    public void setFirstName(String theFirstName) {
+        myFirstName = theFirstName;
+    }
 
-    public String getContactInfo() { return contactInfo; }
-    public void setContactInfo(String contactInfo) { this.contactInfo = contactInfo; }
+    /**
+     * Gets the player's last name.
+     *
+     * @return the last name
+     */
+    public String getLastName() {
+        return myLastName;
+    }
 
-    public String getTimeZone() { return timeZone; }
-    public void setTimeZone(String timeZone) { this.timeZone = timeZone; }
+    /**
+     * Sets the player's last name.
+     *
+     * @param theLastName the new last name to set
+     */
+    public void setLastName(String theLastName) {
+        myLastName = theLastName;
+    }
 
+    /**
+     * Gets the player's preferred contact method.
+     *
+     * @return the preferred contact method
+     */
+    public String getPreferredContact() {
+        return myPreferredContact;
+    }
+
+    /**
+     * Sets the player's preferred contact method.
+     *
+     * @param thePreferredContact the new preferred contact method to set
+     */
+    public void setPreferredContact(String thePreferredContact) {
+        myPreferredContact = thePreferredContact;
+    }
+
+    /**
+     * Gets the player's contact information.
+     *
+     * @return the contact information
+     */
+    public String getContactInfo() {
+        return myContactInfo;
+    }
+
+    /**
+     * Sets the player's contact information.
+     *
+     * @param theContactInfo the new contact information to set
+     */
+    public void setContactInfo(String theContactInfo) {
+        myContactInfo = theContactInfo;
+    }
+
+    /**
+     * Gets the player's time zone.
+     *
+     * @return the time zone
+     */
+    public String getTimeZone() {
+        return myTimeZone;
+    }
+
+    /**
+     * Sets the player's time zone.
+     *
+     * @param theTimeZone the new time zone to set
+     */
+    public void setTimeZone(String theTimeZone) {
+        myTimeZone = theTimeZone;
+    }
+
+    /**
+     * Gets the player's full name by combining first and last names.
+     *
+     * @return the full name (first name + last name if present)
+     */
     public String getFullName() {
-        return firstName + (lastName != null ? " " + lastName : "");
+        return myFirstName + (myLastName != null ? " " + myLastName : "");
     }
 
+    /**
+     * Returns a string representation of the player.
+     *
+     * @return formatted string showing full name and player ID
+     */
     @Override
     public String toString() {
-        return getFullName() + " (ID: " + playerId + ")";
+        return getFullName() + " (ID: " + myPlayerId + ")";
     }
 }

@@ -1,118 +1,375 @@
 /**
- *
+ * Represents a D&D character with all associated attributes including
+ * class, species, background, ability scores, and campaign associations.
  *
  * @author David Norman
  * @version Summer 2025
  */
 public class Character {
-    private String charId;
-    private int level;
-    private String classId;        // Added: main class
-    private String subclassId;
-    private String speciesId;      // Added: main species
-    private String subspeciesId;
-    private String backgroundId;
-    private int playerId;
-    private String gameId;
-    private int strength;
-    private int dexterity;
-    private int constitution;
-    private int intelligence;
-    private int wisdom;
-    private int charisma;
+    private String myCharId;
+    private int myLevel;
+    private String myClassId;
+    private String mySubclassId;
+    private String mySpeciesId;
+    private String mySubspeciesId;
+    private String myBackgroundId;
+    private int myPlayerId;
+    private String myGameId;
+    private int myStrength;
+    private int myDexterity;
+    private int myConstitution;
+    private int myIntelligence;
+    private int myWisdom;
+    private int myCharisma;
 
-    // Constructors
+    /**
+     * Default constructor for Character.
+     */
     public Character() {}
 
-    public Character(String charId, int level, String classId, String subclassId,
-                     String speciesId, String subspeciesId, String backgroundId,
-                     int playerId, String gameId, int str, int dex, int con,
-                     int intel, int wis, int cha) {
-        this.charId = charId;
-        this.level = level;
-        this.classId = classId;
-        this.subclassId = subclassId;
-        this.speciesId = speciesId;
-        this.subspeciesId = subspeciesId;
-        this.backgroundId = backgroundId;
-        this.playerId = playerId;
-        this.gameId = gameId;
-        this.strength = str;
-        this.dexterity = dex;
-        this.constitution = con;
-        this.intelligence = intel;
-        this.wisdom = wis;
-        this.charisma = cha;
+    /**
+     * Constructs a Character with all specified parameters.
+     *
+     * @param theCharId the unique character identifier
+     * @param theLevel the character's level (1-20)
+     * @param theClassId the character's main class
+     * @param theSubclassId the character's subclass
+     * @param theSpeciesId the character's main species
+     * @param theSubspeciesId the character's subspecies
+     * @param theBackgroundId the character's background
+     * @param thePlayerId the ID of the owning player
+     * @param theGameId the ID of the campaign
+     * @param theStr the Strength ability score
+     * @param theDex the Dexterity ability score
+     * @param theCon the Constitution ability score
+     * @param theIntel the Intelligence ability score
+     * @param theWis the Wisdom ability score
+     * @param theCha the Charisma ability score
+     */
+    public Character(String theCharId, int theLevel, String theClassId, String theSubclassId,
+                     String theSpeciesId, String theSubspeciesId, String theBackgroundId,
+                     int thePlayerId, String theGameId, int theStr, int theDex, int theCon,
+                     int theIntel, int theWis, int theCha) {
+        myCharId = theCharId;
+        myLevel = theLevel;
+        myClassId = theClassId;
+        mySubclassId = theSubclassId;
+        mySpeciesId = theSpeciesId;
+        mySubspeciesId = theSubspeciesId;
+        myBackgroundId = theBackgroundId;
+        myPlayerId = thePlayerId;
+        myGameId = theGameId;
+        myStrength = theStr;
+        myDexterity = theDex;
+        myConstitution = theCon;
+        myIntelligence = theIntel;
+        myWisdom = theWis;
+        myCharisma = theCha;
     }
 
-    // Getters and Setters
-    public String getCharId() { return charId; }
-    public void setCharId(String charId) { this.charId = charId; }
+    /**
+     * Gets the character's unique identifier.
+     *
+     * @return the character ID
+     */
+    public String getCharId() {
+        return myCharId;
+    }
 
-    public int getLevel() { return level; }
-    public void setLevel(int level) { this.level = level; }
+    /**
+     * Sets the character's unique identifier.
+     *
+     * @param theCharId the new character ID to set
+     */
+    public void setCharId(String theCharId) {
+        myCharId = theCharId;
+    }
 
-    public String getClassId() { return classId; }
-    public void setClassId(String classId) { this.classId = classId; }
+    /**
+     * Gets the character's level.
+     *
+     * @return the character level (1-20)
+     */
+    public int getLevel() {
+        return myLevel;
+    }
 
-    public String getSubclassId() { return subclassId; }
-    public void setSubclassId(String subclassId) { this.subclassId = subclassId; }
+    /**
+     * Sets the character's level.
+     *
+     * @param theLevel the new level to set (1-20)
+     */
+    public void setLevel(int theLevel) {
+        myLevel = theLevel;
+    }
 
-    public String getSpeciesId() { return speciesId; }
-    public void setSpeciesId(String speciesId) { this.speciesId = speciesId; }
+    /**
+     * Gets the character's main class.
+     *
+     * @return the class ID
+     */
+    public String getClassId() {
+        return myClassId;
+    }
 
-    public String getSubspeciesId() { return subspeciesId; }
-    public void setSubspeciesId(String subspeciesId) { this.subspeciesId = subspeciesId; }
+    /**
+     * Sets the character's main class.
+     *
+     * @param theClassId the new class ID to set
+     */
+    public void setClassId(String theClassId) {
+        myClassId = theClassId;
+    }
 
-    public String getBackgroundId() { return backgroundId; }
-    public void setBackgroundId(String backgroundId) { this.backgroundId = backgroundId; }
+    /**
+     * Gets the character's subclass.
+     *
+     * @return the subclass ID
+     */
+    public String getSubclassId() {
+        return mySubclassId;
+    }
 
-    public int getPlayerId() { return playerId; }
-    public void setPlayerId(int playerId) { this.playerId = playerId; }
+    /**
+     * Sets the character's subclass.
+     *
+     * @param theSubclassId the new subclass ID to set
+     */
+    public void setSubclassId(String theSubclassId) {
+        mySubclassId = theSubclassId;
+    }
 
-    public String getGameId() { return gameId; }
-    public void setGameId(String gameId) { this.gameId = gameId; }
+    /**
+     * Gets the character's main species.
+     *
+     * @return the species ID
+     */
+    public String getSpeciesId() {
+        return mySpeciesId;
+    }
 
-    public int getStrength() { return strength; }
-    public void setStrength(int strength) { this.strength = strength; }
+    /**
+     * Sets the character's main species.
+     *
+     * @param theSpeciesId the new species ID to set
+     */
+    public void setSpeciesId(String theSpeciesId) {
+        mySpeciesId = theSpeciesId;
+    }
 
-    public int getDexterity() { return dexterity; }
-    public void setDexterity(int dexterity) { this.dexterity = dexterity; }
+    /**
+     * Gets the character's subspecies.
+     *
+     * @return the subspecies ID
+     */
+    public String getSubspeciesId() {
+        return mySubspeciesId;
+    }
 
-    public int getConstitution() { return constitution; }
-    public void setConstitution(int constitution) { this.constitution = constitution; }
+    /**
+     * Sets the character's subspecies.
+     *
+     * @param theSubspeciesId the new subspecies ID to set
+     */
+    public void setSubspeciesId(String theSubspeciesId) {
+        mySubspeciesId = theSubspeciesId;
+    }
 
-    public int getIntelligence() { return intelligence; }
-    public void setIntelligence(int intelligence) { this.intelligence = intelligence; }
+    /**
+     * Gets the character's background.
+     *
+     * @return the background ID
+     */
+    public String getBackgroundId() {
+        return myBackgroundId;
+    }
 
-    public int getWisdom() { return wisdom; }
-    public void setWisdom(int wisdom) { this.wisdom = wisdom; }
+    /**
+     * Sets the character's background.
+     *
+     * @param theBackgroundId the new background ID to set
+     */
+    public void setBackgroundId(String theBackgroundId) {
+        myBackgroundId = theBackgroundId;
+    }
 
-    public int getCharisma() { return charisma; }
-    public void setCharisma(int charisma) { this.charisma = charisma; }
+    /**
+     * Gets the ID of the player who owns this character.
+     *
+     * @return the player ID
+     */
+    public int getPlayerId() {
+        return myPlayerId;
+    }
 
-    // Utility methods for D&D calculations
-    public int getAbilityModifier(String ability) {
-        int score = switch (ability.toLowerCase()) {
-            case "str", "strength" -> strength;
-            case "dex", "dexterity" -> dexterity;
-            case "con", "constitution" -> constitution;
-            case "int", "intelligence" -> intelligence;
-            case "wis", "wisdom" -> wisdom;
-            case "cha", "charisma" -> charisma;
+    /**
+     * Sets the ID of the player who owns this character.
+     *
+     * @param thePlayerId the new player ID to set
+     */
+    public void setPlayerId(int thePlayerId) {
+        myPlayerId = thePlayerId;
+    }
+
+    /**
+     * Gets the ID of the campaign this character belongs to.
+     *
+     * @return the game/campaign ID
+     */
+    public String getGameId() {
+        return myGameId;
+    }
+
+    /**
+     * Sets the ID of the campaign this character belongs to.
+     *
+     * @param theGameId the new game/campaign ID to set
+     */
+    public void setGameId(String theGameId) {
+        myGameId = theGameId;
+    }
+
+    /**
+     * Gets the character's Strength ability score.
+     *
+     * @return the Strength score
+     */
+    public int getStrength() {
+        return myStrength;
+    }
+
+    /**
+     * Sets the character's Strength ability score.
+     *
+     * @param theStrength the new Strength score to set
+     */
+    public void setStrength(int theStrength) {
+        myStrength = theStrength;
+    }
+
+    /**
+     * Gets the character's Dexterity ability score.
+     *
+     * @return the Dexterity score
+     */
+    public int getDexterity() {
+        return myDexterity;
+    }
+
+    /**
+     * Sets the character's Dexterity ability score.
+     *
+     * @param theDexterity the new Dexterity score to set
+     */
+    public void setDexterity(int theDexterity) {
+        myDexterity = theDexterity;
+    }
+
+    /**
+     * Gets the character's Constitution ability score.
+     *
+     * @return the Constitution score
+     */
+    public int getConstitution() {
+        return myConstitution;
+    }
+
+    /**
+     * Sets the character's Constitution ability score.
+     *
+     * @param theConstitution the new Constitution score to set
+     */
+    public void setConstitution(int theConstitution) {
+        myConstitution = theConstitution;
+    }
+
+    /**
+     * Gets the character's Intelligence ability score.
+     *
+     * @return the Intelligence score
+     */
+    public int getIntelligence() {
+        return myIntelligence;
+    }
+
+    /**
+     * Sets the character's Intelligence ability score.
+     *
+     * @param theIntelligence the new Intelligence score to set
+     */
+    public void setIntelligence(int theIntelligence) {
+        myIntelligence = theIntelligence;
+    }
+
+    /**
+     * Gets the character's Wisdom ability score.
+     *
+     * @return the Wisdom score
+     */
+    public int getWisdom() {
+        return myWisdom;
+    }
+
+    /**
+     * Sets the character's Wisdom ability score.
+     *
+     * @param theWisdom the new Wisdom score to set
+     */
+    public void setWisdom(int theWisdom) {
+        myWisdom = theWisdom;
+    }
+
+    /**
+     * Gets the character's Charisma ability score.
+     *
+     * @return the Charisma score
+     */
+    public int getCharisma() {
+        return myCharisma;
+    }
+
+    /**
+     * Sets the character's Charisma ability score.
+     *
+     * @param theCharisma the new Charisma score to set
+     */
+    public void setCharisma(int theCharisma) {
+        myCharisma = theCharisma;
+    }
+
+    /**
+     * Calculates the ability modifier for a given ability score.
+     *
+     * @param theAbility the ability name (str/strength, dex/dexterity, etc.)
+     * @return the calculated ability modifier
+     */
+    public int getAbilityModifier(String theAbility) {
+        int score = switch (theAbility.toLowerCase()) {
+            case "str", "strength" -> myStrength;
+            case "dex", "dexterity" -> myDexterity;
+            case "con", "constitution" -> myConstitution;
+            case "int", "intelligence" -> myIntelligence;
+            case "wis", "wisdom" -> myWisdom;
+            case "cha", "charisma" -> myCharisma;
             default -> 10;
         };
         return (score - 10) / 2;
     }
 
-    public String getFormattedAbilityScore(String ability) {
-        int score = switch (ability.toLowerCase()) {
-            case "str", "strength" -> strength;
-            case "dex", "dexterity" -> dexterity;
-            case "con", "constitution" -> constitution;
-            case "int", "intelligence" -> intelligence;
-            case "wis", "wisdom" -> wisdom;
-            case "cha", "charisma" -> charisma;
+    /**
+     * Returns a formatted string showing both ability score and modifier.
+     *
+     * @param theAbility the ability name to format
+     * @return formatted string with score and modifier
+     */
+    public String getFormattedAbilityScore(String theAbility) {
+        int score = switch (theAbility.toLowerCase()) {
+            case "str", "strength" -> myStrength;
+            case "dex", "dexterity" -> myDexterity;
+            case "con", "constitution" -> myConstitution;
+            case "int", "intelligence" -> myIntelligence;
+            case "wis", "wisdom" -> myWisdom;
+            case "cha", "charisma" -> myCharisma;
             default -> 10;
         };
         int modifier = (score - 10) / 2;
@@ -120,23 +377,37 @@ public class Character {
         return score + " (" + modStr + ")";
     }
 
-    // Helper methods for displaying character info
+    /**
+     * Gets the full class description including subclass if available.
+     *
+     * @return formatted class string with subclass in parentheses if present
+     */
     public String getFullClass() {
-        if (subclassId != null && !subclassId.isEmpty()) {
-            return classId + " (" + subclassId + ")";
+        if (mySubclassId != null && !mySubclassId.isEmpty()) {
+            return myClassId + " (" + mySubclassId + ")";
         }
-        return classId;
+        return myClassId;
     }
 
+    /**
+     * Gets the full species description including subspecies if available.
+     *
+     * @return formatted species string with subspecies in parentheses if present
+     */
     public String getFullSpecies() {
-        if (subspeciesId != null && !subspeciesId.isEmpty()) {
-            return speciesId + " (" + subspeciesId + ")";
+        if (mySubspeciesId != null && !mySubspeciesId.isEmpty()) {
+            return mySpeciesId + " (" + mySubspeciesId + ")";
         }
-        return speciesId;
+        return mySpeciesId;
     }
 
+    /**
+     * Returns a string representation of the character.
+     *
+     * @return formatted string showing character name, level, and class
+     */
     @Override
     public String toString() {
-        return charId + " (Level " + level + " " + getFullClass() + ")";
+        return myCharId + " (Level " + myLevel + " " + getFullClass() + ")";
     }
 }

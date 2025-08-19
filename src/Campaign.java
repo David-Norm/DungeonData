@@ -1,46 +1,137 @@
 /**
- *
+ * Represents a D&D campaign with game details including setting, synopsis,
+ * meeting time, and maximum player capacity.
  *
  * @author David Norman
  * @version Summer 2025
  */
 public class Campaign {
-    private String gameId;
-    private String setting;
-    private String synopsis;
-    private java.sql.Timestamp meetingTime;
-    private int maxPlayers;
+    private String myGameId;
+    private String mySetting;
+    private String mySynopsis;
+    private java.sql.Timestamp myMeetingTime;
+    private int myMaxPlayers;
 
-    // Constructors
+    /**
+     * Default constructor for Campaign.
+     */
     public Campaign() {}
 
-    public Campaign(String gameId, String setting, String synopsis,
-                    java.sql.Timestamp meetingTime, int maxPlayers) {
-        this.gameId = gameId;
-        this.setting = setting;
-        this.synopsis = synopsis;
-        this.meetingTime = meetingTime;
-        this.maxPlayers = maxPlayers;
+    /**
+     * Constructs a Campaign with all specified parameters.
+     *
+     * @param theGameId the unique identifier for the campaign
+     * @param theSetting the campaign setting
+     * @param theSynopsis the campaign description and story
+     * @param theMeetingTime the scheduled meeting time for sessions
+     * @param theMaxPlayers the maximum number of players allowed
+     */
+    public Campaign(String theGameId, String theSetting, String theSynopsis,
+                    java.sql.Timestamp theMeetingTime, int theMaxPlayers) {
+        myGameId = theGameId;
+        mySetting = theSetting;
+        mySynopsis = theSynopsis;
+        myMeetingTime = theMeetingTime;
+        myMaxPlayers = theMaxPlayers;
     }
 
-    // Getters and Setters
-    public String getGameId() { return gameId; }
-    public void setGameId(String gameId) { this.gameId = gameId; }
+    /**
+     * Gets the unique game identifier.
+     *
+     * @return the campaign's game ID
+     */
+    public String getGameId() {
+        return myGameId;
+    }
 
-    public String getSetting() { return setting; }
-    public void setSetting(String setting) { this.setting = setting; }
+    /**
+     * Sets the unique game identifier.
+     *
+     * @param theGameId the new game ID to set
+     */
+    public void setGameId(String theGameId) {
+        myGameId = theGameId;
+    }
 
-    public String getSynopsis() { return synopsis; }
-    public void setSynopsis(String synopsis) { this.synopsis = synopsis; }
+    /**
+     * Gets the campaign setting.
+     *
+     * @return the campaign setting
+     */
+    public String getSetting() {
+        return mySetting;
+    }
 
-    public java.sql.Timestamp getMeetingTime() { return meetingTime; }
-    public void setMeetingTime(java.sql.Timestamp meetingTime) { this.meetingTime = meetingTime; }
+    /**
+     * Sets the campaign setting.
+     *
+     * @param theSetting the new setting to set
+     */
+    public void setSetting(String theSetting) {
+        mySetting = theSetting;
+    }
 
-    public int getMaxPlayers() { return maxPlayers; }
-    public void setMaxPlayers(int maxPlayers) { this.maxPlayers = maxPlayers; }
+    /**
+     * Gets the campaign synopsis.
+     *
+     * @return the campaign synopsis/description
+     */
+    public String getSynopsis() {
+        return mySynopsis;
+    }
 
+    /**
+     * Sets the campaign synopsis.
+     *
+     * @param theSynopsis the new synopsis to set
+     */
+    public void setSynopsis(String theSynopsis) {
+        mySynopsis = theSynopsis;
+    }
+
+    /**
+     * Gets the scheduled meeting time.
+     *
+     * @return the meeting time as a Timestamp
+     */
+    public java.sql.Timestamp getMeetingTime() {
+        return myMeetingTime;
+    }
+
+    /**
+     * Sets the scheduled meeting time.
+     *
+     * @param theMeetingTime the new meeting time to set
+     */
+    public void setMeetingTime(java.sql.Timestamp theMeetingTime) {
+        myMeetingTime = theMeetingTime;
+    }
+
+    /**
+     * Gets the maximum number of players allowed.
+     *
+     * @return the maximum player count
+     */
+    public int getMaxPlayers() {
+        return myMaxPlayers;
+    }
+
+    /**
+     * Sets the maximum number of players allowed.
+     *
+     * @param theMaxPlayers the new maximum player count to set
+     */
+    public void setMaxPlayers(int theMaxPlayers) {
+        myMaxPlayers = theMaxPlayers;
+    }
+
+    /**
+     * Returns a string representation of the campaign.
+     *
+     * @return a formatted string showing game ID and setting
+     */
     @Override
     public String toString() {
-        return gameId + " (" + setting + ")";
+        return myGameId + " (" + mySetting + ")";
     }
 }

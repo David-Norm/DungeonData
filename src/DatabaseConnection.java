@@ -1,23 +1,29 @@
-import java.sql.*;
-
 /**
- *
+ * Singleton class for managing database connections.
+ * Provides a single point of access to the MySQL database.
  *
  * @author David Norman
  * @version Summer 2025
  */
+import java.sql.*;
+
 public class DatabaseConnection {
-    private static DatabaseConnection instance;
-    private Connection connection;
+    private static DatabaseConnection myInstance;
+    private Connection myConnection;
 
     private static final String DB_URL = "jdbc:mysql://localhost:3306/dungeondata?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "1P0duser";
 
+    /**
+     * Private constructor to establish database connection.
+     *
+     * @throws SQLException if database connection fails
+     */
     private DatabaseConnection() throws SQLException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            this.connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            myConnection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             System.out.println("Database connected successfully!");
         } catch (ClassNotFoundException e) {
             throw new SQLException("Database driver not found. Make sure MySQL Connector/J is in your classpath.", e);
@@ -31,21 +37,35 @@ public class DatabaseConnection {
         }
     }
 
+    /**
+     * Gets the singleton instance of DatabaseConnection.
+     *
+     * @return the DatabaseConnection instance
+     * @throws SQLException if database connection fails
+     */
     public static DatabaseConnection getInstance() throws SQLException {
-        if (instance == null || instance.getConnection().isClosed()) {
-            instance = new DatabaseConnection();
+        if (myInstance == null || myInstance.getConnection().isClosed()) {
+            myInstance = new DatabaseConnection();
         }
-        return instance;
+        return myInstance;
     }
 
+    /**
+     * Gets the database connection.
+     *
+     * @return the Connection object
+     */
     public Connection getConnection() {
-        return connection;
+        return myConnection;
     }
 
+    /**
+     * Closes the database connection.
+     */
     public void closeConnection() {
         try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
+            if (myConnection != null && !myConnection.isClosed()) {
+                myConnection.close();
                 System.out.println("Database connection closed.");
             }
         } catch (SQLException e) {

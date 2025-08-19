@@ -1,86 +1,95 @@
+/**
+ * Main application window for the D&D Character Database Manager.
+ * Provides a tabbed interface for managing characters, players, campaigns, and reports.
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- *
- *
- * @author David Norman
- * @version Summer 2025
- */
 public class DnDMainView extends JFrame {
-    private DnDController controller;
-    private JTabbedPane tabbedPane;
-    private JLabel statusBar;
-    private Timer statusTimer;
+    private DnDController myController;
+    private JTabbedPane myTabbedPane;
+    private JLabel myStatusBar;
+    private Timer myStatusTimer;
 
-    // View panels
-    private CharacterView characterView;
-    private PlayerView playerView;
-    private CampaignView campaignView;
-    private ClassSpeciesView classSpeciesView;
-    private CharacterCreatorView characterCreatorView;
-    private CharacterEditView characterEditView; // NEW: Character edit panel
-    private ReportView reportView;
+    private CharacterView myCharacterView;
+    private PlayerView myPlayerView;
+    private CampaignView myCampaignView;
+    private ClassSpeciesView myClassSpeciesView;
+    private CharacterCreatorView myCharacterCreatorView;
+    private CharacterEditView myCharacterEditView;
+    private ReportView myReportView;
 
-    public DnDMainView(DnDController controller) {
-        this.controller = controller;
+    /**
+     * Constructs the main view with the specified controller.
+     *
+     * @param theController the main application controller
+     */
+    public DnDMainView(DnDController theController) {
+        myController = theController;
         initializeComponents();
         setupLayout();
         setupMenuBar();
         setupStatusTimer();
     }
 
+    /**
+     * Initializes all GUI components.
+     */
     private void initializeComponents() {
         setTitle("D&D Character Database Manager");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1200, 800);
         setLocationRelativeTo(null);
 
-        // Create tabbed pane
-        tabbedPane = new JTabbedPane();
+        myTabbedPane = new JTabbedPane();
 
-        // Initialize view panels
-        characterView = new CharacterView(controller, this);
-        playerView = new PlayerView(controller, this);
-        campaignView = new CampaignView(controller, this);
-        classSpeciesView = new ClassSpeciesView(controller);
-        characterCreatorView = new CharacterCreatorView(controller, this);
-        characterEditView = new CharacterEditView(controller, this); // NEW: Initialize edit panel
-        reportView = new ReportView(controller, this);
+        myCharacterView = new CharacterView(myController, this);
+        myPlayerView = new PlayerView(myController, this);
+        myCampaignView = new CampaignView(myController, this);
+        myClassSpeciesView = new ClassSpeciesView(myController);
+        myCharacterCreatorView = new CharacterCreatorView(myController, this);
+        myCharacterEditView = new CharacterEditView(myController, this);
+        myReportView = new ReportView(myController, this);
     }
 
+    /**
+     * Sets up the main layout and adds all tabs.
+     */
     private void setupLayout() {
         setLayout(new BorderLayout());
 
-        // Add tabs
-        tabbedPane.addTab("Characters", characterView);
-        tabbedPane.addTab("Players", playerView);
-        tabbedPane.addTab("Campaigns", campaignView);
-        tabbedPane.addTab("Classes & Species", classSpeciesView);
-        tabbedPane.addTab("Character Creator", characterCreatorView);
-        tabbedPane.addTab("Character Editor", characterEditView); // NEW: Add edit tab
-        tabbedPane.addTab("Reports", reportView);
+        myTabbedPane.addTab("Characters", myCharacterView);
+        myTabbedPane.addTab("Players", myPlayerView);
+        myTabbedPane.addTab("Campaigns", myCampaignView);
+        myTabbedPane.addTab("Classes & Species", myClassSpeciesView);
+        myTabbedPane.addTab("Character Creator", myCharacterCreatorView);
+        myTabbedPane.addTab("Character Editor", myCharacterEditView);
+        myTabbedPane.addTab("Reports", myReportView);
 
-        add(tabbedPane, BorderLayout.CENTER);
+        add(myTabbedPane, BorderLayout.CENTER);
 
-        // Add status bar with enhanced styling
-        statusBar = new JLabel("Ready - Welcome to D&D Character Database Manager");
-        statusBar.setBorder(BorderFactory.createCompoundBorder(
+        myStatusBar = new JLabel("Ready - Welcome to D&D Character Database Manager");
+        myStatusBar.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLoweredBevelBorder(),
                 BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
-        statusBar.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
-        statusBar.setOpaque(true);
-        statusBar.setBackground(new Color(240, 240, 240));
-        add(statusBar, BorderLayout.SOUTH);
+        myStatusBar.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+        myStatusBar.setOpaque(true);
+        myStatusBar.setBackground(new Color(240, 240, 240));
+        add(myStatusBar, BorderLayout.SOUTH);
     }
 
+    /**
+     * Sets up the application menu bar.
+     */
     private void setupMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        // File Menu
         JMenu fileMenu = new JMenu("File");
 
         JMenuItem refreshCurrentItem = new JMenuItem("Refresh Current Tab");
@@ -94,10 +103,9 @@ public class DnDMainView extends JFrame {
         fileMenu.addSeparator();
 
         JMenuItem exitItem = new JMenuItem("Exit");
-        exitItem.addActionListener(e -> controller.shutdown());
+        exitItem.addActionListener(e -> myController.shutdown());
         fileMenu.add(exitItem);
 
-        // Help Menu
         JMenu helpMenu = new JMenu("Help");
         JMenuItem aboutItem = new JMenuItem("About");
         aboutItem.addActionListener(e -> showAboutDialog());
@@ -109,64 +117,74 @@ public class DnDMainView extends JFrame {
         setJMenuBar(menuBar);
     }
 
+    /**
+     * Sets up the status message timer.
+     */
     private void setupStatusTimer() {
-        // Timer to clear status messages after 5 seconds
-        statusTimer = new Timer(5000, e -> {
-            if (!statusBar.getText().equals("Ready")) {
+        myStatusTimer = new Timer(5000, e -> {
+            if (!myStatusBar.getText().equals("Ready")) {
                 setStatusMessage("Ready", MessageType.INFO);
             }
         });
-        statusTimer.setRepeats(false);
+        myStatusTimer.setRepeats(false);
     }
 
+    /**
+     * Refreshes data for the currently selected tab.
+     */
     private void refreshCurrentTab() {
-        int selectedIndex = tabbedPane.getSelectedIndex();
-        String tabName = tabbedPane.getTitleAt(selectedIndex);
+        int selectedIndex = myTabbedPane.getSelectedIndex();
 
         switch (selectedIndex) {
             case 0 -> {
-                characterView.refreshData();
+                myCharacterView.refreshData();
                 setStatusMessage("Characters data refreshed", MessageType.SUCCESS);
             }
             case 1 -> {
-                playerView.refreshData();
+                myPlayerView.refreshData();
                 setStatusMessage("Players data refreshed", MessageType.SUCCESS);
             }
             case 2 -> {
-                campaignView.refreshData();
+                myCampaignView.refreshData();
                 setStatusMessage("Campaigns data refreshed", MessageType.SUCCESS);
             }
             case 3 -> {
-                classSpeciesView.refreshData();
+                myClassSpeciesView.refreshData();
                 setStatusMessage("Classes & Species data refreshed", MessageType.SUCCESS);
             }
             case 4 -> {
-                characterCreatorView.refreshData();
+                myCharacterCreatorView.refreshData();
                 setStatusMessage("Character Creator data refreshed", MessageType.SUCCESS);
             }
-            case 5 -> { // NEW: Character Editor tab
-                characterEditView.refreshData();
+            case 5 -> {
+                myCharacterEditView.refreshData();
                 setStatusMessage("Character Editor data refreshed", MessageType.SUCCESS);
             }
-            case 6 -> { // Updated index for Reports
-                reportView.refreshData();
+            case 6 -> {
+                myReportView.refreshData();
                 setStatusMessage("Reports cleared", MessageType.SUCCESS);
             }
             default -> setStatusMessage("Tab refreshed", MessageType.SUCCESS);
         }
     }
 
+    /**
+     * Refreshes data for all tabs.
+     */
     private void refreshAllTabs() {
-        characterView.refreshData();
-        playerView.refreshData();
-        campaignView.refreshData();
-        classSpeciesView.refreshData();
-        characterCreatorView.refreshData();
-        characterEditView.refreshData(); // NEW: Refresh edit view
-        reportView.refreshData();
+        myCharacterView.refreshData();
+        myPlayerView.refreshData();
+        myCampaignView.refreshData();
+        myClassSpeciesView.refreshData();
+        myCharacterCreatorView.refreshData();
+        myCharacterEditView.refreshData();
+        myReportView.refreshData();
         setStatusMessage("All data refreshed successfully", MessageType.SUCCESS);
     }
 
+    /**
+     * Shows the application about dialog.
+     */
     private void showAboutDialog() {
         JOptionPane.showMessageDialog(this,
                 """
@@ -189,74 +207,113 @@ public class DnDMainView extends JFrame {
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
-    // Public methods for other views to use
+    /**
+     * Switches to the Characters tab and refreshes data.
+     */
     public void switchToCharactersTab() {
-        tabbedPane.setSelectedIndex(0);
-        characterView.refreshData();
+        myTabbedPane.setSelectedIndex(0);
+        myCharacterView.refreshData();
         setStatusMessage("Switched to Characters tab", MessageType.INFO);
     }
 
+    /**
+     * Switches to the Players tab and refreshes data.
+     */
     public void switchToPlayersTab() {
-        tabbedPane.setSelectedIndex(1);
-        playerView.refreshData();
+        myTabbedPane.setSelectedIndex(1);
+        myPlayerView.refreshData();
         setStatusMessage("Switched to Players tab", MessageType.INFO);
     }
 
-    // NEW: Method to switch to character editor and edit a specific character
-    public void switchToCharacterEditor(Character character) {
-        tabbedPane.setSelectedIndex(5); // Character Editor tab
-        characterEditView.editCharacter(character);
-        setStatusMessage("Editing character: " + character.getCharId(), MessageType.INFO);
+    /**
+     * Switches to the character editor and loads a specific character.
+     *
+     * @param theCharacter the character to edit
+     */
+    public void switchToCharacterEditor(Character theCharacter) {
+        myTabbedPane.setSelectedIndex(5);
+        myCharacterEditView.editCharacter(theCharacter);
+        setStatusMessage("Editing character: " + theCharacter.getCharId(), MessageType.INFO);
     }
 
+    /**
+     * Gets the application controller.
+     *
+     * @return the controller instance
+     */
     public DnDController getController() {
-        return controller;
+        return myController;
     }
 
-    // Enhanced status bar messaging system
+    /**
+     * Enumeration for different message types with associated colors.
+     */
     public enum MessageType {
         INFO(new Color(240, 240, 240), Color.BLACK),
         SUCCESS(new Color(220, 255, 220), new Color(0, 120, 0)),
         WARNING(new Color(255, 248, 220), new Color(180, 120, 0)),
         ERROR(new Color(255, 220, 220), new Color(180, 0, 0));
 
-        private final Color backgroundColor;
-        private final Color textColor;
+        private final Color myBackgroundColor;
+        private final Color myTextColor;
 
-        MessageType(Color backgroundColor, Color textColor) {
-            this.backgroundColor = backgroundColor;
-            this.textColor = textColor;
+        MessageType(Color theBackgroundColor, Color theTextColor) {
+            myBackgroundColor = theBackgroundColor;
+            myTextColor = theTextColor;
         }
 
-        public Color getBackgroundColor() { return backgroundColor; }
-        public Color getTextColor() { return textColor; }
+        public Color getBackgroundColor() { return myBackgroundColor; }
+        public Color getTextColor() { return myTextColor; }
     }
 
-    public void setStatusMessage(String message, MessageType type) {
+    /**
+     * Sets a status message with the specified type and color.
+     *
+     * @param theMessage the message to display
+     * @param theType the message type for color coding
+     */
+    public void setStatusMessage(String theMessage, MessageType theType) {
         SwingUtilities.invokeLater(() -> {
-            statusBar.setText(message);
-            statusBar.setBackground(type.getBackgroundColor());
-            statusBar.setForeground(type.getTextColor());
-
-            // Restart the timer to clear the message after 5 seconds
-            statusTimer.restart();
+            myStatusBar.setText(theMessage);
+            myStatusBar.setBackground(theType.getBackgroundColor());
+            myStatusBar.setForeground(theType.getTextColor());
+            myStatusTimer.restart();
         });
     }
 
-    // Convenience methods for different message types
-    public void showInfoMessage(String message) {
-        setStatusMessage(message, MessageType.INFO);
+    /**
+     * Shows an informational message.
+     *
+     * @param theMessage the message to display
+     */
+    public void showInfoMessage(String theMessage) {
+        setStatusMessage(theMessage, MessageType.INFO);
     }
 
-    public void showSuccessMessage(String message) {
-        setStatusMessage(message, MessageType.SUCCESS);
+    /**
+     * Shows a success message.
+     *
+     * @param theMessage the message to display
+     */
+    public void showSuccessMessage(String theMessage) {
+        setStatusMessage(theMessage, MessageType.SUCCESS);
     }
 
-    public void showWarningMessage(String message) {
-        setStatusMessage(message, MessageType.WARNING);
+    /**
+     * Shows a warning message.
+     *
+     * @param theMessage the message to display
+     */
+    public void showWarningMessage(String theMessage) {
+        setStatusMessage(theMessage, MessageType.WARNING);
     }
 
-    public void showErrorMessage(String message) {
-        setStatusMessage(message, MessageType.ERROR);
+    /**
+     * Shows an error message.
+     *
+     * @param theMessage the message to display
+     */
+    public void showErrorMessage(String theMessage) {
+        setStatusMessage(theMessage, MessageType.ERROR);
     }
 }

@@ -1,41 +1,55 @@
-import javax.swing.*;
-import java.awt.*;
-
 /**
- *
+ * Dialog for creating new players.
+ * Provides form fields for entering player information.
  *
  * @author David Norman
  * @version Summer 2025
  */
+import javax.swing.*;
+import java.awt.*;
+
 class PlayerCreationDialog extends JDialog {
-    private DnDController controller;
-    private DnDMainView mainView;
-    private boolean playerCreated = false;
+    private DnDController myController;
+    private DnDMainView myMainView;
+    private boolean myPlayerCreated = false;
 
-    private JTextField fnameField;
-    private JTextField lnameField;
-    private JComboBox<String> contactCombo;
-    private JTextField contactInfoField;
-    private JComboBox<String> timezoneCombo;
+    private JTextField myFnameField;
+    private JTextField myLnameField;
+    private JComboBox<String> myContactCombo;
+    private JTextField myContactInfoField;
+    private JComboBox<String> myTimezoneCombo;
 
-    public PlayerCreationDialog(JFrame parent, DnDController controller, DnDMainView mainView) {
-        super(parent, "Add New Player", true);
-        this.controller = controller;
-        this.mainView = mainView;
+    /**
+     * Constructs a PlayerCreationDialog.
+     *
+     * @param theParent the parent frame
+     * @param theController the application controller
+     * @param theMainView the main application view
+     */
+    public PlayerCreationDialog(JFrame theParent, DnDController theController, DnDMainView theMainView) {
+        super(theParent, "Add New Player", true);
+        myController = theController;
+        myMainView = theMainView;
         initializeComponents();
         setupLayout();
         pack();
-        setLocationRelativeTo(parent);
+        setLocationRelativeTo(theParent);
     }
 
+    /**
+     * Initializes GUI components.
+     */
     private void initializeComponents() {
-        fnameField = new JTextField(15);
-        lnameField = new JTextField(15);
-        contactCombo = new JComboBox<>(new String[]{"Discord", "Email", "Phone"});
-        contactInfoField = new JTextField(20);
-        timezoneCombo = new JComboBox<>(new String[]{"EST", "CST", "MST", "PST", "GMT", "CET"});
+        myFnameField = new JTextField(15);
+        myLnameField = new JTextField(15);
+        myContactCombo = new JComboBox<>(new String[]{"Discord", "Email", "Phone"});
+        myContactInfoField = new JTextField(20);
+        myTimezoneCombo = new JComboBox<>(new String[]{"EST", "CST", "MST", "PST", "GMT", "CET"});
     }
 
+    /**
+     * Sets up the dialog layout.
+     */
     private void setupLayout() {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -45,36 +59,35 @@ class PlayerCreationDialog extends JDialog {
         gbc.gridx = 0; gbc.gridy = 0;
         add(new JLabel("First Name:"), gbc);
         gbc.gridx = 1;
-        add(fnameField, gbc);
+        add(myFnameField, gbc);
 
         gbc.gridx = 0; gbc.gridy = 1;
         add(new JLabel("Last Name:"), gbc);
         gbc.gridx = 1;
-        add(lnameField, gbc);
+        add(myLnameField, gbc);
 
         gbc.gridx = 0; gbc.gridy = 2;
         add(new JLabel("Preferred Contact:"), gbc);
         gbc.gridx = 1;
-        add(contactCombo, gbc);
+        add(myContactCombo, gbc);
 
         gbc.gridx = 0; gbc.gridy = 3;
         add(new JLabel("Contact Info:"), gbc);
         gbc.gridx = 1;
-        add(contactInfoField, gbc);
+        add(myContactInfoField, gbc);
 
         gbc.gridx = 0; gbc.gridy = 4;
         add(new JLabel("Time Zone:"), gbc);
         gbc.gridx = 1;
-        add(timezoneCombo, gbc);
+        add(myTimezoneCombo, gbc);
 
-        // Button panel
         JPanel buttonPanel = new JPanel(new FlowLayout());
         JButton createBtn = new JButton("Create Player");
         JButton cancelBtn = new JButton("Cancel");
 
         createBtn.addActionListener(e -> createPlayer());
         cancelBtn.addActionListener(e -> {
-            mainView.showInfoMessage("Player creation cancelled");
+            myMainView.showInfoMessage("Player creation cancelled");
             dispose();
         });
 
@@ -87,46 +100,54 @@ class PlayerCreationDialog extends JDialog {
         add(buttonPanel, gbc);
     }
 
+    /**
+     * Creates a new player with the form data.
+     */
     private void createPlayer() {
         try {
-            String firstName = fnameField.getText().trim();
+            String firstName = myFnameField.getText().trim();
             if (firstName.isEmpty()) {
-                mainView.showWarningMessage("First name is required for player creation");
-                fnameField.requestFocus();
+                myMainView.showWarningMessage("First name is required for player creation");
+                myFnameField.requestFocus();
                 return;
             }
 
-            String lastName = lnameField.getText().trim();
-            String contactInfo = contactInfoField.getText().trim();
+            String lastName = myLnameField.getText().trim();
+            String contactInfo = myContactInfoField.getText().trim();
 
             if (contactInfo.isEmpty()) {
-                mainView.showWarningMessage("Contact information is required");
-                contactInfoField.requestFocus();
+                myMainView.showWarningMessage("Contact information is required");
+                myContactInfoField.requestFocus();
                 return;
             }
 
             Player player = new Player();
             player.setFirstName(firstName);
             player.setLastName(lastName.isEmpty() ? null : lastName);
-            player.setPreferredContact((String) contactCombo.getSelectedItem());
+            player.setPreferredContact((String) myContactCombo.getSelectedItem());
             player.setContactInfo(contactInfo);
-            player.setTimeZone((String) timezoneCombo.getSelectedItem());
+            player.setTimeZone((String) myTimezoneCombo.getSelectedItem());
 
-            if (controller.createPlayer(player)) {
-                playerCreated = true;
+            if (myController.createPlayer(player)) {
+                myPlayerCreated = true;
                 String fullName = player.getFullName();
-                mainView.showSuccessMessage("Player '" + fullName + "' created successfully!");
+                myMainView.showSuccessMessage("Player '" + fullName + "' created successfully!");
                 dispose();
             } else {
-                mainView.showErrorMessage("Failed to create player - please check the information and try again");
+                myMainView.showErrorMessage("Failed to create player - please check the information and try again");
             }
 
         } catch (Exception e) {
-            mainView.showErrorMessage("Error creating player: " + e.getMessage());
+            myMainView.showErrorMessage("Error creating player: " + e.getMessage());
         }
     }
 
+    /**
+     * Checks if a player was successfully created.
+     *
+     * @return true if player was created, false otherwise
+     */
     public boolean wasPlayerCreated() {
-        return playerCreated;
+        return myPlayerCreated;
     }
 }

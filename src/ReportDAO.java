@@ -1,20 +1,31 @@
-import java.sql.*;
-import java.util.*;
-
 /**
- *
+ * Data Access Object for generating reports.
+ * Contains methods for executing complex queries for reporting purposes.
  *
  * @author David Norman
  * @version Summer 2025
  */
-public class ReportDAO {
-    private Connection connection;
+import java.sql.*;
+import java.util.*;
 
+public class ReportDAO {
+    private Connection myConnection;
+
+    /**
+     * Constructs a ReportDAO and establishes database connection.
+     *
+     * @throws SQLException if database connection fails
+     */
     public ReportDAO() throws SQLException {
-        this.connection = DatabaseConnection.getInstance().getConnection();
+        myConnection = DatabaseConnection.getInstance().getConnection();
     }
 
-    // SQL Query 1 - Which characters belong to which class/subclass and which campaign they're in
+    /**
+     * Gets characters grouped by class/subclass and campaign.
+     *
+     * @return list of character-class-campaign data
+     * @throws SQLException if database query fails
+     */
     public List<Map<String, Object>> getCharactersByClassAndCampaign() throws SQLException {
         String query = """
             SELECT c.char_id AS character_name, cl.class_id AS class, sc.subclass_id AS subclass, g.game_id AS campaign
@@ -27,7 +38,12 @@ public class ReportDAO {
         return executeQuery(query);
     }
 
-    // SQL Query 2 - List classes that have more subclasses than any other class has characters
+    /**
+     * Gets classes with the most subclasses.
+     *
+     * @return list of classes and their subclass counts
+     * @throws SQLException if database query fails
+     */
     public List<Map<String, Object>> getClassesWithMostSubclasses() throws SQLException {
         String query = """
             SELECT cl.class_id, COUNT(sc.subclass_id) AS subclass_count
@@ -51,7 +67,12 @@ public class ReportDAO {
         return executeQuery(query);
     }
 
-    // SQL Query 3 - Find characters whose level is above average of other characters in the same species
+    /**
+     * Gets characters with above-average level for their species.
+     *
+     * @return list of characters above species average level
+     * @throws SQLException if database query fails
+     */
     public List<Map<String, Object>> getAboveAverageLevelBySpecies() throws SQLException {
         String query = """
             SELECT c1.char_id, c1.lvl, sp.species_id
@@ -70,7 +91,12 @@ public class ReportDAO {
         return executeQuery(query);
     }
 
-    // SQL Query 4 - Shows all players and all characters
+    /**
+     * Gets all players and their characters.
+     *
+     * @return list of player-character relationships
+     * @throws SQLException if database query fails
+     */
     public List<Map<String, Object>> getAllPlayersAndCharacters() throws SQLException {
         String query = """
             SELECT p.player_id, p.fname, c.char_id
@@ -85,7 +111,12 @@ public class ReportDAO {
         return executeQuery(query);
     }
 
-    // SQL Query 5 - Find all characters with common settings or characters with Soldier background
+    /**
+     * Gets characters in popular settings or with military backgrounds.
+     *
+     * @return list of characters matching criteria
+     * @throws SQLException if database query fails
+     */
     public List<Map<String, Object>> getPopularSettingsAndMilitary() throws SQLException {
         String query = """
             SELECT c.char_id, 'Popular Setting' as reason, g.setting
@@ -101,7 +132,12 @@ public class ReportDAO {
         return executeQuery(query);
     }
 
-    // SQL Query 6 - List each character with their species and size
+    /**
+     * Gets character species and size information.
+     *
+     * @return list of character-species-size data
+     * @throws SQLException if database query fails
+     */
     public List<Map<String, Object>> getCharacterSpeciesAndSize() throws SQLException {
         String query = """
             SELECT c.char_id, sp.species_id, sp.species_size
@@ -113,7 +149,12 @@ public class ReportDAO {
         return executeQuery(query);
     }
 
-    // SQL Query 7 - Shows how many characters each player controls
+    /**
+     * Gets player character counts.
+     *
+     * @return list of players and their character counts
+     * @throws SQLException if database query fails
+     */
     public List<Map<String, Object>> getPlayerCharacterCounts() throws SQLException {
         String query = """
             SELECT p.player_id, p.fname, COUNT(c.char_id) AS character_count
@@ -125,7 +166,12 @@ public class ReportDAO {
         return executeQuery(query);
     }
 
-    // SQL Query 8 - List all campaigns and how many unique players are participating in each
+    /**
+     * Gets campaign participation statistics.
+     *
+     * @return list of campaigns and their player counts
+     * @throws SQLException if database query fails
+     */
     public List<Map<String, Object>> getCampaignParticipation() throws SQLException {
         String query = """
             SELECT g.game_id, g.setting, COUNT(DISTINCT c.player_id) AS num_players
@@ -137,7 +183,12 @@ public class ReportDAO {
         return executeQuery(query);
     }
 
-    // SQL Query 9 - Class Distribution Analysis
+    /**
+     * Gets class distribution statistics.
+     *
+     * @return list of classes and their usage statistics
+     * @throws SQLException if database query fails
+     */
     public List<Map<String, Object>> getClassDistribution() throws SQLException {
         String query = """
             SELECT cl.class_id, COUNT(c.char_id) AS character_count,
@@ -151,7 +202,12 @@ public class ReportDAO {
         return executeQuery(query);
     }
 
-    // SQL Query 10 - Show characters and their ability modifiers
+    /**
+     * Gets character ability modifiers.
+     *
+     * @return list of characters with calculated ability modifiers
+     * @throws SQLException if database query fails
+     */
     public List<Map<String, Object>> getCharacterAbilityModifiers() throws SQLException {
         String query = """
             SELECT
@@ -174,11 +230,17 @@ public class ReportDAO {
         return executeQuery(query);
     }
 
-    // Helper method for executing String queries
-    private List<Map<String, Object>> executeQuery(String query) throws SQLException {
+    /**
+     * Executes a query and returns results as a list of maps.
+     *
+     * @param theQuery the SQL query to execute
+     * @return list of result maps
+     * @throws SQLException if database query fails
+     */
+    private List<Map<String, Object>> executeQuery(String theQuery) throws SQLException {
         List<Map<String, Object>> results = new ArrayList<>();
 
-        try (PreparedStatement stmt = connection.prepareStatement(query);
+        try (PreparedStatement stmt = myConnection.prepareStatement(theQuery);
              ResultSet rs = stmt.executeQuery()) {
 
             ResultSetMetaData metaData = rs.getMetaData();

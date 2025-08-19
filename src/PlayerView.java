@@ -1,38 +1,51 @@
+/**
+ * Player management view for displaying and managing player data.
+ * Provides functionality to view players, add new players, and view their characters.
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 import java.util.Vector;
 
-/**
- *
- *
- * @author David Norman
- * @version Summer 2025
- */
 public class PlayerView extends JPanel {
-    private DnDController controller;
-    private DnDMainView mainView;
-    private JTable playerTable;
-    private DefaultTableModel tableModel;
+    private DnDController myController;
+    private DnDMainView myMainView;
+    private JTable myPlayerTable;
+    private DefaultTableModel myTableModel;
 
-    public PlayerView(DnDController controller, DnDMainView mainView) {
-        this.controller = controller;
-        this.mainView = mainView;
+    /**
+     * Constructs a PlayerView with the specified controller and main view.
+     *
+     * @param theController the application controller
+     * @param theMainView the main application view
+     */
+    public PlayerView(DnDController theController, DnDMainView theMainView) {
+        myController = theController;
+        myMainView = theMainView;
         initializeComponents();
         setupLayout();
         refreshData();
     }
 
+    /**
+     * Initializes GUI components.
+     */
     private void initializeComponents() {
-        playerTable = new JTable();
-        playerTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        myPlayerTable = new JTable();
+        myPlayerTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 
+    /**
+     * Sets up the panel layout and components.
+     */
     private void setupLayout() {
         setLayout(new BorderLayout());
 
-        JScrollPane scrollPane = new JScrollPane(playerTable);
+        JScrollPane scrollPane = new JScrollPane(myPlayerTable);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Players"));
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
@@ -52,9 +65,12 @@ public class PlayerView extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * Refreshes the player data from the database.
+     */
     public void refreshData() {
         try {
-            List<Player> players = controller.getAllPlayers();
+            List<Player> players = myController.getAllPlayers();
 
             Vector<String> columnNames = new Vector<>();
             columnNames.add("Player ID");
@@ -76,59 +92,63 @@ public class PlayerView extends JPanel {
                 data.add(row);
             }
 
-            tableModel = new DefaultTableModel(data, columnNames) {
+            myTableModel = new DefaultTableModel(data, columnNames) {
                 @Override
-                public boolean isCellEditable(int row, int column) {
+                public boolean isCellEditable(int theRow, int theColumn) {
                     return false;
                 }
             };
-            playerTable.setModel(tableModel);
+            myPlayerTable.setModel(myTableModel);
 
-            mainView.showSuccessMessage("Loaded " + players.size() + " players");
+            myMainView.showSuccessMessage("Loaded " + players.size() + " players");
 
         } catch (Exception e) {
-            mainView.showErrorMessage("Failed to load players: " + e.getMessage());
+            myMainView.showErrorMessage("Failed to load players: " + e.getMessage());
         }
     }
 
+    /**
+     * Shows the dialog for adding a new player.
+     */
     private void showAddPlayerDialog() {
         try {
             PlayerCreationDialog dialog = new PlayerCreationDialog(
-                    (JFrame) SwingUtilities.getWindowAncestor(this), controller, mainView);
+                    (JFrame) SwingUtilities.getWindowAncestor(this), myController, myMainView);
             dialog.setVisible(true);
 
             if (dialog.wasPlayerCreated()) {
                 refreshData();
-                mainView.showSuccessMessage("New player added successfully");
+                myMainView.showSuccessMessage("New player added successfully");
             } else {
-                mainView.showInfoMessage("Player creation cancelled");
+                myMainView.showInfoMessage("Player creation cancelled");
             }
         } catch (Exception e) {
-            mainView.showErrorMessage("Error opening player creation dialog: " + e.getMessage());
+            myMainView.showErrorMessage("Error opening player creation dialog: " + e.getMessage());
         }
     }
 
+    /**
+     * Displays characters belonging to the selected player.
+     */
     private void viewPlayerCharacters() {
-        int selectedRow = playerTable.getSelectedRow();
+        int selectedRow = myPlayerTable.getSelectedRow();
         if (selectedRow == -1) {
-            mainView.showWarningMessage("Please select a player to view their characters");
+            myMainView.showWarningMessage("Please select a player to view their characters");
             return;
         }
 
         try {
-            int playerId = (Integer) playerTable.getValueAt(selectedRow, 0);
-            String playerName = playerTable.getValueAt(selectedRow, 1) + " " +
-                    (playerTable.getValueAt(selectedRow, 2) != null ? playerTable.getValueAt(selectedRow, 2) : "");
+            int playerId = (Integer) myPlayerTable.getValueAt(selectedRow, 0);
+            String playerName = myPlayerTable.getValueAt(selectedRow, 1) + " " +
+                    (myPlayerTable.getValueAt(selectedRow, 2) != null ? myPlayerTable.getValueAt(selectedRow, 2) : "");
 
-            // Get characters for this player
-            List<Character> playerCharacters = controller.getCharactersByPlayer(playerId);
+            List<Character> playerCharacters = myController.getCharactersByPlayer(playerId);
 
             if (playerCharacters.isEmpty()) {
-                mainView.showInfoMessage(playerName + " has no characters yet");
+                myMainView.showInfoMessage(playerName + " has no characters yet");
                 return;
             }
 
-            // Create a simple display of characters
             StringBuilder characterList = new StringBuilder();
             characterList.append("Characters for ").append(playerName).append(":\n\n");
 
@@ -150,10 +170,10 @@ public class PlayerView extends JPanel {
             JOptionPane.showMessageDialog(this, scrollPane,
                     "Characters for " + playerName, JOptionPane.INFORMATION_MESSAGE);
 
-            mainView.showInfoMessage("Viewing " + playerCharacters.size() + " characters for " + playerName);
+            myMainView.showInfoMessage("Viewing " + playerCharacters.size() + " characters for " + playerName);
 
         } catch (Exception e) {
-            mainView.showErrorMessage("Error loading player characters: " + e.getMessage());
+            myMainView.showErrorMessage("Error loading player characters: " + e.getMessage());
         }
     }
 }

@@ -1,35 +1,93 @@
 /**
- *
+ * Represents a D&D character species/race with size category and description.
  *
  * @author David Norman
  * @version Summer 2025
  */
 public class Species {
-    private String speciesId;
-    private String speciesSize;
-    private String speciesSummary;
+    private String mySpeciesId;
+    private String mySpeciesSize;
+    private String mySpeciesSummary;
 
-    // Constructors
+    /**
+     * Default constructor for Species.
+     */
     public Species() {}
 
-    public Species(String speciesId, String speciesSize, String speciesSummary) {
-        this.speciesId = speciesId;
-        this.speciesSize = speciesSize;
-        this.speciesSummary = speciesSummary;
+    /**
+     * Constructs a Species with all specified parameters.
+     *
+     * @param theSpeciesId the unique species identifier
+     * @param theSpeciesSize the size category of the species
+     * @param theSpeciesSummary the detailed species description
+     */
+    public Species(String theSpeciesId, String theSpeciesSize, String theSpeciesSummary) {
+        mySpeciesId = theSpeciesId;
+        mySpeciesSize = theSpeciesSize;
+        mySpeciesSummary = theSpeciesSummary;
     }
 
-    // Getters and Setters
-    public String getSpeciesId() { return speciesId; }
-    public void setSpeciesId(String speciesId) { this.speciesId = speciesId; }
+    /**
+     * Gets the unique species identifier.
+     *
+     * @return the species ID
+     */
+    public String getSpeciesId() {
+        return mySpeciesId;
+    }
 
-    public String getSpeciesSize() { return speciesSize; }
-    public void setSpeciesSize(String speciesSize) { this.speciesSize = speciesSize; }
+    /**
+     * Sets the unique species identifier.
+     *
+     * @param theSpeciesId the new species ID to set
+     */
+    public void setSpeciesId(String theSpeciesId) {
+        mySpeciesId = theSpeciesId;
+    }
 
-    public String getSpeciesSummary() { return speciesSummary; }
-    public void setSpeciesSummary(String speciesSummary) { this.speciesSummary = speciesSummary; }
+    /**
+     * Gets the species size category.
+     *
+     * @return the species size
+     */
+    public String getSpeciesSize() {
+        return mySpeciesSize;
+    }
 
+    /**
+     * Sets the species size category.
+     *
+     * @param theSpeciesSize the new species size to set
+     */
+    public void setSpeciesSize(String theSpeciesSize) {
+        mySpeciesSize = theSpeciesSize;
+    }
+
+    /**
+     * Gets the species description.
+     *
+     * @return the species summary
+     */
+    public String getSpeciesSummary() {
+        return mySpeciesSummary;
+    }
+
+    /**
+     * Sets the species description.
+     *
+     * @param theSpeciesSummary the new species summary to set
+     */
+    public void setSpeciesSummary(String theSpeciesSummary) {
+        mySpeciesSummary = theSpeciesSummary;
+    }
+
+    /**
+     * Returns a string representation of the species.
+     *
+     * @return formatted string showing species ID and size
+     */
     @Override
     public String toString() {
-        return speciesId + " (" + speciesSize + ")";
+        return mySpeciesId + " (" + mySpeciesSize + ")";
     }
 }
