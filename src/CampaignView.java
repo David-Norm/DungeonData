@@ -150,7 +150,6 @@ public class CampaignView extends JPanel {
             columnNames.add("Setting");
             columnNames.add("Synopsis");
             columnNames.add("Meeting Time");
-            columnNames.add("Max Players");
 
             Vector<Vector<Object>> data = new Vector<Vector<Object>>();
             for (Campaign campaign : campaigns) {
@@ -161,7 +160,6 @@ public class CampaignView extends JPanel {
                         campaign.getSynopsis().substring(0, 100) + "..." :
                         campaign.getSynopsis());
                 row.add(campaign.getMeetingTime());
-                row.add(campaign.getMaxPlayers());
                 data.add(row);
             }
 
@@ -212,8 +210,7 @@ public class CampaignView extends JPanel {
             details.append("CAMPAIGN: ").append(selectedCampaign.getGameId()).append("\n");
             details.append("=".repeat(50)).append("\n\n");
             details.append("Setting: ").append(selectedCampaign.getSetting()).append("\n");
-            details.append("Meeting Time: ").append(selectedCampaign.getMeetingTime()).append("\n");
-            details.append("Max Players: ").append(selectedCampaign.getMaxPlayers()).append("\n\n");
+            details.append("Meeting Time: ").append(selectedCampaign.getMeetingTime()).append("\n\n");
             details.append("Synopsis:\n");
             details.append("-".repeat(20)).append("\n");
             details.append(selectedCampaign.getSynopsis());

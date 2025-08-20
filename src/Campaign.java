@@ -1,6 +1,6 @@
 /**
  * Represents a D&D campaign with game details including setting, synopsis,
- * meeting time, and maximum player capacity.
+ * and meeting time.
  *
  * @author David Norman
  * @version Summer 2025
@@ -10,7 +10,6 @@ public class Campaign {
     private String mySetting;
     private String mySynopsis;
     private java.sql.Timestamp myMeetingTime;
-    private int myMaxPlayers;
 
     /**
      * Default constructor for Campaign.
@@ -24,15 +23,13 @@ public class Campaign {
      * @param theSetting the campaign setting
      * @param theSynopsis the campaign description and story
      * @param theMeetingTime the scheduled meeting time for sessions
-     * @param theMaxPlayers the maximum number of players allowed
      */
     public Campaign(String theGameId, String theSetting, String theSynopsis,
-                    java.sql.Timestamp theMeetingTime, int theMaxPlayers) {
+                    java.sql.Timestamp theMeetingTime) {
         myGameId = theGameId;
         mySetting = theSetting;
         mySynopsis = theSynopsis;
         myMeetingTime = theMeetingTime;
-        myMaxPlayers = theMaxPlayers;
     }
 
     /**
@@ -105,24 +102,6 @@ public class Campaign {
      */
     public void setMeetingTime(java.sql.Timestamp theMeetingTime) {
         myMeetingTime = theMeetingTime;
-    }
-
-    /**
-     * Gets the maximum number of players allowed.
-     *
-     * @return the maximum player count
-     */
-    public int getMaxPlayers() {
-        return myMaxPlayers;
-    }
-
-    /**
-     * Sets the maximum number of players allowed.
-     *
-     * @param theMaxPlayers the new maximum player count to set
-     */
-    public void setMaxPlayers(int theMaxPlayers) {
-        myMaxPlayers = theMaxPlayers;
     }
 
     /**
