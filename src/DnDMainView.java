@@ -7,11 +7,9 @@
  */
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class DnDMainView extends JFrame {
-    private DnDController myController;
+    private final DnDController myController;
     private JTabbedPane myTabbedPane;
     private JLabel myStatusBar;
     private Timer myStatusTimer;
@@ -188,20 +186,10 @@ public class DnDMainView extends JFrame {
     private void showAboutDialog() {
         JOptionPane.showMessageDialog(this,
                 """
-                D&D Character Database Manager v1.0
-                
-                A comprehensive tool for managing D&D campaigns,
-                characters, and players.
-                
-                Features:
-                • Character creation and management
-                • Character editing and modification
-                • Player database with contact information
-                • Campaign tracking and organization
-                • Advanced reporting and analytics
-                • D&D 5e class and species reference
-                
-                Built with Java Swing and MySQL
+                D&D Character Database Manager
+                By: David Norman
+                     &
+                     Georgia Karwhite
                 """,
                 "About D&D Database Manager",
                 JOptionPane.INFORMATION_MESSAGE);
@@ -217,15 +205,6 @@ public class DnDMainView extends JFrame {
     }
 
     /**
-     * Switches to the Players tab and refreshes data.
-     */
-    public void switchToPlayersTab() {
-        myTabbedPane.setSelectedIndex(1);
-        myPlayerView.refreshData();
-        setStatusMessage("Switched to Players tab", MessageType.INFO);
-    }
-
-    /**
      * Switches to the character editor and loads a specific character.
      *
      * @param theCharacter the character to edit
@@ -234,15 +213,6 @@ public class DnDMainView extends JFrame {
         myTabbedPane.setSelectedIndex(5);
         myCharacterEditView.editCharacter(theCharacter);
         setStatusMessage("Editing character: " + theCharacter.getCharId(), MessageType.INFO);
-    }
-
-    /**
-     * Gets the application controller.
-     *
-     * @return the controller instance
-     */
-    public DnDController getController() {
-        return myController;
     }
 
     /**
