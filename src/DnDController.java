@@ -1,3 +1,8 @@
+import javax.swing.*;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Main controller class for the D&D Character Database Manager.
  * Coordinates between the view layer and data access objects.
@@ -5,11 +10,6 @@
  * @author David Norman
  * @version Summer 2025
  */
-import javax.swing.*;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-
 public class DnDController {
     private DnDMainView myMainView;
     private CharacterDAO myCharacterDAO;

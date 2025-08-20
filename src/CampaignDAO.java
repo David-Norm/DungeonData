@@ -1,10 +1,3 @@
-/**
- * Data Access Object for Campaign entities.
- * Handles database operations for campaign data.
- *
- * @author David Norman
- * @version Summer 2025
- */
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,6 +5,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object for Campaign entities.
+ * Handles database operations for campaign data.
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 public class CampaignDAO {
     private Connection myConnection;
 

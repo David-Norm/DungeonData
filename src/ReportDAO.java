@@ -1,3 +1,6 @@
+import java.sql.*;
+import java.util.*;
+
 /**
  * Data Access Object for generating reports.
  * Contains methods for executing complex queries for reporting purposes.
@@ -5,9 +8,6 @@
  * @author David Norman
  * @version Summer 2025
  */
-import java.sql.*;
-import java.util.*;
-
 public class ReportDAO {
     private Connection myConnection;
 

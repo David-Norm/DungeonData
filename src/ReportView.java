@@ -1,10 +1,3 @@
-/**
- * Report generation view for displaying various database reports.
- * Provides buttons to generate different types of analytical reports.
- *
- * @author David Norman
- * @version Summer 2025
- */
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -12,6 +5,13 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.List;
 
+/**
+ * Report generation view for displaying various database reports.
+ * Provides buttons to generate different types of analytical reports.
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 public class ReportView extends JPanel {
     private DnDController myController;
     private DnDMainView myMainView;

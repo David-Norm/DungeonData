@@ -1,3 +1,7 @@
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+
 /**
  * Character creation view for creating new D&D characters.
  * Provides form fields for all character attributes including ability scores,
@@ -6,10 +10,6 @@
  * @author David Norman
  * @version Summer 2025
  */
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
-
 public class CharacterCreatorView extends JPanel {
     private DnDController myController;
     private DnDMainView myMainView;

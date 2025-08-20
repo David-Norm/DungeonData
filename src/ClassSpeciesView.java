@@ -1,3 +1,9 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.List;
+import java.util.Vector;
+
 /**
  * Class and Species reference view for displaying D&D classes and species information.
  * Provides detailed information about classes, subclasses, species, and subspecies
@@ -6,12 +12,6 @@
  * @author David Norman
  * @version Summer 2025
  */
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.List;
-import java.util.Vector;
-
 public class ClassSpeciesView extends JPanel {
     private DnDController myController;
     private JTable myClassTable;

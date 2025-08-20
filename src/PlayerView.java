@@ -1,3 +1,9 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.List;
+import java.util.Vector;
+
 /**
  * Player management view for displaying and managing player data.
  * Provides functionality to view players, add new players, delete players, and view their characters.
@@ -5,12 +11,6 @@
  * @author David Norman
  * @version Summer 2025
  */
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.List;
-import java.util.Vector;
-
 public class PlayerView extends JPanel {
     private DnDController myController;
     private DnDMainView myMainView;

@@ -1,10 +1,3 @@
-/**
- * Data Access Object for lookup data including classes, species, and backgrounds.
- * Provides methods to retrieve reference data from the database.
- *
- * @author David Norman
- * @version Summer 2025
- */
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,6 +5,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object for lookup data including classes, species, and backgrounds.
+ * Provides methods to retrieve reference data from the database.
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 public class LookupDAO {
     private Connection myConnection;
 

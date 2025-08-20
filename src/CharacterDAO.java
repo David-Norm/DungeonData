@@ -1,3 +1,9 @@
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Data Access Object for Character entities.
  * Handles database operations for character data including CRUD operations.
@@ -5,12 +11,6 @@
  * @author David Norman
  * @version Summer 2025
  */
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class CharacterDAO {
     private Connection myConnection;
 

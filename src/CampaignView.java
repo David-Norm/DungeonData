@@ -1,10 +1,3 @@
-/**
- * Campaign management view for displaying and interacting with campaign data.
- * Provides functionality to view campaign details and synopses.
- *
- * @author David Norman
- * @version Summer 2025
- */
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -15,6 +8,13 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Vector;
 
+/**
+ * Campaign management view for displaying and interacting with campaign data.
+ * Provides functionality to view campaign details and synopses.
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 public class CampaignView extends JPanel {
     private DnDController myController;
     private DnDMainView myMainView;

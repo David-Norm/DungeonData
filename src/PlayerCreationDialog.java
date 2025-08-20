@@ -1,3 +1,6 @@
+import javax.swing.*;
+import java.awt.*;
+
 /**
  * Dialog for creating new players.
  * Provides form fields for entering player information.
@@ -5,9 +8,6 @@
  * @author David Norman
  * @version Summer 2025
  */
-import javax.swing.*;
-import java.awt.*;
-
 class PlayerCreationDialog extends JDialog {
     private DnDController myController;
     private DnDMainView myMainView;

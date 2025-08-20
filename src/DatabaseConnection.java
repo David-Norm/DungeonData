@@ -1,3 +1,5 @@
+import java.sql.*;
+
 /**
  * Singleton class for managing database connections.
  * Provides a single point of access to the MySQL database.
@@ -5,8 +7,6 @@
  * @author David Norman
  * @version Summer 2025
  */
-import java.sql.*;
-
 public class DatabaseConnection {
     private static DatabaseConnection myInstance;
     private Connection myConnection;

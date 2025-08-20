@@ -1,10 +1,3 @@
-/**
- * Character management view for displaying and managing character data.
- * Provides functionality to view, edit, and delete characters.
- *
- * @author David Norman
- * @version Summer 2025
- */
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -12,6 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+/**
+ * Character management view for displaying and managing character data.
+ * Provides functionality to view, edit, and delete characters.
+ *
+ * @author David Norman
+ * @version Summer 2025
+ */
 public class CharacterView extends JPanel {
     private DnDController myController;
     private DnDMainView myMainView;

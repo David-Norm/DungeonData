@@ -1,3 +1,7 @@
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+
 /**
  * Character editing view for modifying existing D&D characters.
  * Provides form fields pre-populated with character data.
@@ -5,10 +9,6 @@
  * @author David Norman
  * @version Summer 2025
  */
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
-
 public class CharacterEditView extends JPanel {
     private DnDController myController;
     private DnDMainView myMainView;

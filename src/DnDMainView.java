@@ -1,3 +1,6 @@
+import javax.swing.*;
+import java.awt.*;
+
 /**
  * Main application window for the D&D Character Database Manager.
  * Provides a tabbed interface for managing characters, players, campaigns, and reports.
@@ -5,9 +8,6 @@
  * @author David Norman
  * @version Summer 2025
  */
-import javax.swing.*;
-import java.awt.*;
-
 public class DnDMainView extends JFrame {
     private final DnDController myController;
     private JTabbedPane myTabbedPane;
