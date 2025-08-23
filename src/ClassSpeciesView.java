@@ -10,6 +10,7 @@ import java.util.Vector;
  * in a four-panel layout with interactive filtering and description viewing.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class ClassSpeciesView extends JPanel {

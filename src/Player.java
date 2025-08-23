@@ -3,6 +3,7 @@
  * and preferences for communication and scheduling.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class Player {

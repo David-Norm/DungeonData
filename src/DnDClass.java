@@ -4,6 +4,7 @@
  * casting ability (if applicable), primary ability, and secondary ability.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class DnDClass {

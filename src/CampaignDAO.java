@@ -10,6 +10,7 @@ import java.util.List;
  * Handles database operations for campaign data.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class CampaignDAO {

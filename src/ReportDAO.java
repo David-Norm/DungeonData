@@ -6,6 +6,7 @@ import java.util.*;
  * Contains methods for executing complex queries for reporting purposes.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class ReportDAO {

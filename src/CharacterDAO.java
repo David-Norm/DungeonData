@@ -9,6 +9,7 @@ import java.util.Map;
  * Handles database operations for character data including CRUD operations.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class CharacterDAO {

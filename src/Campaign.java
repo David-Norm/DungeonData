@@ -3,6 +3,7 @@
  * and meeting time.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class Campaign {

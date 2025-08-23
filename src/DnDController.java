@@ -8,6 +8,7 @@ import java.util.Map;
  * Coordinates between the view layer and data access objects.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class DnDController {

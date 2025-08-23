@@ -6,6 +6,7 @@ import java.awt.*;
  * Provides a tabbed interface for managing characters, players, campaigns, and reports.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class DnDMainView extends JFrame {

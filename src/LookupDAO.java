@@ -10,6 +10,7 @@ import java.util.List;
  * Provides methods to retrieve reference data from the database.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class LookupDAO {

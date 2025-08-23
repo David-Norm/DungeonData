@@ -3,6 +3,7 @@
  * class, species, background, ability scores, and campaign associations.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class Character {

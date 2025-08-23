@@ -10,6 +10,7 @@ import java.util.List;
  * Provides buttons to generate different types of analytical reports.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class ReportView extends JPanel {

@@ -2,6 +2,7 @@
  * Represents a D&D character species/race with size category and description.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class Species {

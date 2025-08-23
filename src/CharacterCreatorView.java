@@ -8,6 +8,7 @@ import java.util.List;
  * class selection, species selection, and campaign assignment.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class CharacterCreatorView extends JPanel {

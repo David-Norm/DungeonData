@@ -13,6 +13,7 @@ import java.util.Vector;
  * Provides functionality to view campaign details and synopses.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class CampaignView extends JPanel {

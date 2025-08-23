@@ -9,6 +9,7 @@ import java.util.Vector;
  * Provides functionality to view players, add new players, delete players, and view their characters.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class PlayerView extends JPanel {

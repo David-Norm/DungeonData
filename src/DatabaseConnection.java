@@ -5,15 +5,16 @@ import java.sql.*;
  * Provides a single point of access to the MySQL database.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class DatabaseConnection {
     private static DatabaseConnection myInstance;
     private Connection myConnection;
 
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/dungeondata?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/queries?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "1P0duser";
+    private static final String DB_PASSWORD = "";
 
     /**
      * Private constructor to establish database connection.

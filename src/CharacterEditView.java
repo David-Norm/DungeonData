@@ -7,6 +7,7 @@ import java.util.List;
  * Provides form fields pre-populated with character data.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class CharacterEditView extends JPanel {

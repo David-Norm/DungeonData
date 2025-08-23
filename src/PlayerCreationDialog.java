@@ -6,6 +6,7 @@ import java.awt.*;
  * Provides form fields for entering player information.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 class PlayerCreationDialog extends JDialog {

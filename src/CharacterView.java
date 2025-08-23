@@ -10,6 +10,7 @@ import java.util.Vector;
  * Provides functionality to view, edit, and delete characters.
  *
  * @author David Norman
+ * @author Georgia Karwhite
  * @version Summer 2025
  */
 public class CharacterView extends JPanel {
